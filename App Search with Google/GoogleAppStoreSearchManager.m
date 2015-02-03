@@ -46,6 +46,7 @@
     NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
     
     [NetworkActivityIndicator incrementActivityCount];
+
     [self.web loadRequest:requestObj];
 }
 
@@ -89,7 +90,6 @@
 
 #pragma mark - UIWebViewDelegate Methods
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-    [NetworkActivityIndicator decrementActivityCount];
     
     NSString *html = [webView stringByEvaluatingJavaScriptFromString:
                       @"document.body.innerHTML"];
@@ -104,7 +104,7 @@
             NSArray *results = (NSArray *)responseObject[@"results"];
             if (!errorMessage) {
                 for (NSDictionary *result in results) {
-                    NSString *title = (NSString *)result[@"artistName"];
+                    NSString *title = (NSString *)result[@"trackName"];
                     NSNumber *ratingCount = (NSNumber *)result[@"userRatingCount"];
                     NSNumber *rating = (NSNumber *)result[@"averageUserRating"];
                     NSString *itunesUrl = (NSString *)result[@"trackViewUrl"];
@@ -117,12 +117,14 @@
             
             [self.tasks removeObject:operation];
             if (self.tasks.count == 0) {
+                [NetworkActivityIndicator decrementActivityCount];
                 [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error: %@", error);
             [self.tasks removeObject:operation];
             if (self.tasks.count == 0) {
+                [NetworkActivityIndicator decrementActivityCount];
                 [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
             }
         }];
@@ -132,7 +134,6 @@
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    [NetworkActivityIndicator decrementActivityCount];
     
     [self.delegate appSearchDidFailWithError:error];
 }
