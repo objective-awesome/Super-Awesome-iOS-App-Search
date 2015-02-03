@@ -41,6 +41,7 @@ static const int ddLogLevel = DDLogLevelError;
 
 - (instancetype)initWithDelegate:(id<GoogleAppStoreSearchManagerDelegate>)delegate {
     self = [super init];
+    
     if (self) {
         _tasks = [[NSMutableDictionary alloc] init];
         _results = [[NSMutableArray alloc] init];
@@ -49,10 +50,13 @@ static const int ddLogLevel = DDLogLevelError;
         _webView = [[UIWebView alloc] init];
         _webView.delegate = self;
     }
+    
     return self;
 }
 
 - (void)getAppsForSearchTerm:(NSString *)term withScope:(DeviceScope)scope {
+    [self invalidateTasks];
+    
     NSArray *terms = [term componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     NSString *urlString = [GoogleAppStoreSearchManager getUrlWithSearchTerms:terms scope:scope];
     NSURL *url = [NSURL URLWithString:urlString];
@@ -63,7 +67,25 @@ static const int ddLogLevel = DDLogLevelError;
     [self.webView loadRequest:requestObj];
 }
 
+
 #pragma mark - Private Helpers
+
+- (void)invalidateTasks {
+    DDLogInfo(@"Invalidate all google app search tasks");
+    [NetworkActivityIndicator decrementActivityCount];
+    [self.webView stopLoading];
+    
+    if (self.tasks.allKeys.count > 0) {
+        DDLogDebug(@"Invalidating %@ tasks", @(self.tasks.allKeys.count));
+        
+        for (NSURLSessionDataTask *task in self.tasks.allKeys) {
+            [NetworkActivityIndicator decrementActivityCount];
+            [task cancel];
+        }
+    }
+    
+    self.results = [NSMutableArray array];
+}
 
 + (NSString *)getUrlWithSearchTerms:(NSArray *)terms scope:(DeviceScope)scope {
     
@@ -93,9 +115,11 @@ static const int ddLogLevel = DDLogLevelError;
     NSURLComponents *components = [NSURLComponents componentsWithString:urlString];
     NSArray *pathComponents = [components.path componentsSeparatedByString:@"/"];
     NSLog(@"%@", pathComponents);
+    
     if (![(NSString *)pathComponents[2] isEqualToString:@"app"]) {
         return nil;
     }
+    
     NSString *idComponent = pathComponents.lastObject;
     NSString *appId = [idComponent substringFromIndex:2];
     
@@ -106,7 +130,9 @@ static const int ddLogLevel = DDLogLevelError;
 #pragma mark - UIWebViewDelegate Methods
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-    self.results = [[NSMutableArray alloc] init];
+    // The request finished, so decrement
+    [NetworkActivityIndicator decrementActivityCount];
+    
     NSString *html = [webView stringByEvaluatingJavaScriptFromString:
                       @"document.body.innerHTML"];
     NSError *err = nil;
@@ -138,7 +164,8 @@ static const int ddLogLevel = DDLogLevelError;
                                "Rating: %@\n"
                                "Rating Count: %@\n"
                                "iTunes URL: %@\n"
-                               "Price: %@\n", title, ratingCount, rating, itunesUrl, price);
+                               "Price: %@\n"
+                               "Rank: %@\n", title, ratingCount, rating, itunesUrl, price, self.tasks[task]);
                     
                     GoogleAppResult *appResult = [[GoogleAppResult alloc] initWithUrl:itunesUrl name:title ratingCount:ratingCount rating:rating price:price rank:self.tasks[task]];
                     [self.results addObject:appResult];
@@ -146,27 +173,30 @@ static const int ddLogLevel = DDLogLevelError;
             }
 
             [self.tasks removeObjectForKey:task];
+            [NetworkActivityIndicator decrementActivityCount];
             
             if (self.tasks.count == 0) {
-                [NetworkActivityIndicator decrementActivityCount];
                 [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
             }
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
+            DDLogWarn(@"ITunes request failed with error: %@", error);
             [self.tasks removeObjectForKey:task];
+            [NetworkActivityIndicator decrementActivityCount];
             
+            // TODO: This is wrong
             if (self.tasks.count == 0) {
-                [NetworkActivityIndicator decrementActivityCount];
                 [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
             }
         }];
         
+        [NetworkActivityIndicator incrementActivityCount];
         [self.tasks setObject:@(rank++) forKey:task];
         [task resume];
     }
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    
     [self.delegate appSearchDidFailWithError:error];
 }
+
 @end

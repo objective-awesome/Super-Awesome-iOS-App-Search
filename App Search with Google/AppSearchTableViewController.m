@@ -35,6 +35,8 @@ static const int ddLogLevel = DDLogLevelError;
 @property (nonatomic, strong) GoogleAppStoreSearchManager *searchManager;
 @property (nonatomic, strong) NSArray *resultsStore;
 @property (nonatomic, assign) BOOL loading;
+@property (nonatomic, assign, readonly) DeviceScope scope;
+@property (nonatomic, strong) NSTimer *inputLimiter;
 
 @end
 
@@ -74,8 +76,6 @@ static const int ddLogLevel = DDLogLevelError;
     self.navigationController.navigationBar.translucent = NO;
     
     self.scopeSegmentedControl.tintColor = [UIColor whiteColor];
-        
-    self.searchBar.translucent = YES;
     self.navigationItem.titleView = self.searchBar;
 }
 
@@ -103,10 +103,34 @@ static const int ddLogLevel = DDLogLevelError;
 }
 
 
+#pragma mark - Getters
+
+- (DeviceScope)scope {
+    DeviceScope scope = DeviceScopeiPhone;
+    
+    switch (self.scopeSegmentedControl.selectedSegmentIndex) {
+        case 0: {
+            scope = DeviceScopeiPhone;
+        } break;
+        case 1: {
+            scope = DeviceScopeiPad;
+        } break;
+        default: {
+            NSAssert(NO, @"Device Scope type not handled: %@", @(self.scopeSegmentedControl.selectedSegmentIndex));
+        } break;
+    }
+    
+    return scope;
+}
+
+
 #pragma mark - GoogleAppStoreSearchManagerDelegate
 
 - (void)appSearchDidSucceedWithResults:(NSArray *)apps {
-    self.resultsStore = apps;
+    DDLogInfo(@"App Search succeeded");
+    self.resultsStore = [apps sortedArrayUsingComparator:^NSComparisonResult(GoogleAppResult *obj1, GoogleAppResult *obj2) {
+        return [obj1.rank compare:obj2.rank];
+    }];
     
     [self.tableView reloadData];
     self.loading = NO;
@@ -114,6 +138,7 @@ static const int ddLogLevel = DDLogLevelError;
 
 - (void)appSearchDidFailWithError:(NSError *)error {
     // TODO: Show a failure state on UI
+    DDLogError(@"App search failed with error: %@", error);
     self.loading = NO;
 }
 
@@ -159,25 +184,24 @@ static const int ddLogLevel = DDLogLevelError;
 // called when text changes (including clear)
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     DDLogDebug(@"Search Bar Text did Change: %@", searchText);
+    
+    if (self.inputLimiter != nil) {
+        [self.inputLimiter invalidate];
+        self.inputLimiter = nil;
+    }
+    
+    self.inputLimiter = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(search) userInfo:nil repeats:NO];
+    [[NSRunLoop mainRunLoop] addTimer:self.inputLimiter forMode:NSDefaultRunLoopMode];
+}
+
+- (void)search {
+    [self.searchManager getAppsForSearchTerm:self.searchBar.text withScope:self.scope];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     NSString *searchString = searchBar.text;
-    DeviceScope scope = DeviceScopeiPhone;
     
-    switch (self.scopeSegmentedControl.selectedSegmentIndex) {
-        case 0: {
-            scope = DeviceScopeiPhone;
-        } break;
-        case 1: {
-            scope = DeviceScopeiPad;
-        } break;
-        default: {
-            NSAssert(NO, @"Device Scope type not handled: %@", @(self.scopeSegmentedControl.selectedSegmentIndex));
-        } break;
-    }
-    
-    [self.searchManager getAppsForSearchTerm:searchString withScope:scope];
+    [self.searchManager getAppsForSearchTerm:searchString withScope:self.scope];
     self.loading = YES;
     
     [self.searchBar resignFirstResponder];
