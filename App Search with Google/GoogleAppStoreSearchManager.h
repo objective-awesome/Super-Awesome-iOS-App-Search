@@ -8,19 +8,18 @@
 
 #import <Foundation/Foundation.h>
 @import UIKit;
-#import "GoogleAppResult.h"
-#import "GoogleAppStoreSearchManagerDelegate.h"
 
-typedef NS_ENUM(NSUInteger, DeviceScope) {
-    DeviceScopeiPad,
-    DeviceScopeiPhone
-};
+#import "Constants.h"
+
+
+@protocol GoogleAppStoreSearchManagerDelegate;
+
 
 @interface GoogleAppStoreSearchManager : NSObject <UIWebViewDelegate>
+
 @property (strong, nonatomic) id<GoogleAppStoreSearchManagerDelegate> delegate;
 
 - (void)getAppsForSearchTerms:(NSArray *)terms withScope:(DeviceScope)scope;
-
 - (instancetype)initWithDelegate:(id<GoogleAppStoreSearchManagerDelegate>)delegate;
 
 @end

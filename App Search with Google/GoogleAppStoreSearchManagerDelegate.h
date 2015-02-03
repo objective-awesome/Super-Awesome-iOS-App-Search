@@ -10,7 +10,7 @@
 
 @protocol GoogleAppStoreSearchManagerDelegate <NSObject>
 
-- (void)didReceiveAppStoreSearchResults:(NSArray *)apps;
-- (void)searchFailedWithError:(NSError *)error;
+- (void)appSearchDidSucceedWithResults:(NSArray *)apps;
+- (void)appSearchDidFailWithError:(NSError *)error;
 
 @end

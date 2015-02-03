@@ -8,11 +8,17 @@
 
 #import "AppSearchTableViewController.h"
 
-@interface AppSearchTableViewController () <UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate>
+#import "GoogleAppStoreSearchManager.h"
+#import "GoogleAppStoreSearchManagerDelegate.h"
+
+
+@interface AppSearchTableViewController () <UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate>
 
 @property (nonatomic, strong) UISearchController *searchController;
 @property (nonatomic, strong) UISegmentedControl *scopeSegmentedControl;
 @property (nonatomic, strong) UIBarButtonItem *scopeBarButtonItem;
+
+@property (nonatomic, strong) GoogleAppStoreSearchManager *searchManager;
 
 @end
 
@@ -20,6 +26,8 @@
 @implementation AppSearchTableViewController
 
 - (void)viewDidLoad {
+    self.searchManager = [[GoogleAppStoreSearchManager alloc] initWithDelegate:self];
+    
     // Set up the search controller
     self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     self.searchController.delegate = self;
@@ -124,7 +132,7 @@
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    NSLog(@"Search Bar Search Button Clicked");
+    
 }
 
 // called when cancel button pressed

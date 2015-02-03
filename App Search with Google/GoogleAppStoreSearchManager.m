@@ -7,9 +7,13 @@
 //
 
 #import "GoogleAppStoreSearchManager.h"
+
 #import <AFHTTPRequestOperationManager.h>
 #import <AFOnoResponseSerializer.h>
 #import <Ono.h>
+
+#import "GoogleAppResult.h"
+#import "GoogleAppStoreSearchManagerDelegate.h"
 
 @interface GoogleAppStoreSearchManager ()
 @property (strong, nonatomic) UIWebView *web;
@@ -81,10 +85,10 @@
         GoogleAppResult *result = [[GoogleAppResult alloc] initWithUrl:element.attributes[@"href"] name:element.stringValue];
         [appResults addObject:result];
     }
-    [self.delegate didReceiveAppStoreSearchResults:[NSArray arrayWithArray:appResults]];
+    [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:appResults]];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    [self.delegate searchFailedWithError:error];
+    [self.delegate appSearchDidFailWithError:error];
 }
 @end
