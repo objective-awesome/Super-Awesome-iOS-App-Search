@@ -20,4 +20,7 @@ typedef NS_ENUM(NSUInteger, DeviceScope) {
 @property (strong, nonatomic) id<GoogleAppStoreSearchManagerDelegate> delegate;
 
 - (void)getAppsForSearchTerms:(NSArray *)terms withScope:(DeviceScope)scope;
+
+- (instancetype)initWithDelegate:(id<GoogleAppStoreSearchManagerDelegate>)delegate;
+
 @end

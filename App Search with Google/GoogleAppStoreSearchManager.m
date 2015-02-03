@@ -19,6 +19,14 @@
 
 #pragma mark - Public Methods
 
+- (instancetype)initWithDelegate:(id<GoogleAppStoreSearchManagerDelegate>)delegate {
+    self = [super init];
+    if (self) {
+        _delegate = delegate;
+    }
+    return self;
+}
+
 - (void)getAppsForSearchTerms:(NSArray *)terms withScope:(DeviceScope)scope {
     self.web = [[UIWebView alloc] init];
     self.web.delegate = self;
