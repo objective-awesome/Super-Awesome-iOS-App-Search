@@ -8,6 +8,9 @@
 
 #import "AppSearchTableViewController.h"
 
+#import <SpinKit/RTSpinKitView.h>
+#import <MBProgressHUD/MBProgressHUD.h>
+
 #import "GoogleAppStoreSearchManager.h"
 #import "GoogleAppStoreSearchManagerDelegate.h"
 #import "GoogleAppResult.h"
@@ -53,17 +56,37 @@
 }
 
 
+#pragma mark - Setters
+
+- (void)setLoading:(BOOL)loading {
+    _loading = loading;
+    
+    // TODO: Dim / Blur & Show SpinKit
+    if (_loading) {
+        RTSpinKitView *spinner = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyle9CubeGrid color:[UIColor whiteColor] spinnerSize:37.0];
+        
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.square = YES;
+        hud.mode = MBProgressHUDModeCustomView;
+        hud.customView = spinner;
+    } else {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }
+}
+
+
 #pragma mark - GoogleAppStoreSearchManagerDelegate
 
 - (void)appSearchDidSucceedWithResults:(NSArray *)apps {
-    NSLog(@"App search results to VC: %@", apps);
     self.resultsStore = apps;
     
     [self.tableView reloadData];
+    self.loading = NO;
 }
 
 - (void)appSearchDidFailWithError:(NSError *)error {
     // TODO: Show a failure state on UI
+    self.loading = NO;
 }
 
 
@@ -127,6 +150,7 @@
     }
     
     [self.searchManager getAppsForSearchTerm:searchString withScope:scope];
+    self.loading = YES;
     
     [self.searchBar resignFirstResponder];
 }

@@ -23,18 +23,21 @@ PODS:
   - AFOnoResponseSerializer (1.0.0):
     - AFNetworking (~> 2.2)
     - Ono (~> 1.0)
+  - MBProgressHUD (0.9)
   - Ono (1.2.0)
   - SpinKit (1.2.0)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.5)
   - AFOnoResponseSerializer (~> 1.0)
+  - MBProgressHUD (~> 0.9)
   - Ono (~> 1.2)
   - SpinKit (~> 1.2)
 
 SPEC CHECKSUMS:
   AFNetworking: 0f54cb5d16ce38c1b76948faffb8d5fb705021c7
   AFOnoResponseSerializer: 7da7ac6a1cff0eb46894602ca884e903f95087d8
+  MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
   Ono: 2c9f6c8c50af1b40e988ff85a3f200574ee445cd
   SpinKit: 11fa465172473ce3d59a80bf0449020b850e5229
 

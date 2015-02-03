@@ -14,6 +14,7 @@
 
 #import "GoogleAppResult.h"
 #import "GoogleAppStoreSearchManagerDelegate.h"
+#import "NetworkActivityIndicator.h"
 
 @interface GoogleAppStoreSearchManager ()
 @property (strong, nonatomic) UIWebView *web;
@@ -36,11 +37,11 @@
     self.web.delegate = self;
     
     NSArray *terms = [term componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    
     NSString *urlString = [GoogleAppStoreSearchManager getUrlWithSearchTerms:terms scope:scope];
-    
     NSURL *url = [NSURL URLWithString:urlString];
     NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
+    
+    [NetworkActivityIndicator incrementActivityCount];
     [self.web loadRequest:requestObj];
 }
 
@@ -75,19 +76,25 @@
 
 #pragma mark - UIWebViewDelegate Methods
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [NetworkActivityIndicator decrementActivityCount];
+    
     NSString *html = [webView stringByEvaluatingJavaScriptFromString:
                       @"document.body.innerHTML"];
     NSError *err = nil;
     ONOXMLDocument *doc = [ONOXMLDocument HTMLDocumentWithString:html encoding:NSUTF8StringEncoding error:&err];
     NSMutableArray *appResults = [[NSMutableArray alloc] init];
+    
     for (ONOXMLElement *element in [doc CSS:@"h3.r a"]) {
         GoogleAppResult *result = [[GoogleAppResult alloc] initWithUrl:element.attributes[@"href"] name:element.stringValue];
         [appResults addObject:result];
     }
+    
     [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:appResults]];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    [NetworkActivityIndicator decrementActivityCount];
+    
     [self.delegate appSearchDidFailWithError:error];
 }
 @end
