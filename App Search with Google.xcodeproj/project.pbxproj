@@ -11,6 +11,7 @@
 		5D528EA11A8148D9004B6DA2 /* GoogleAppResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D528E9E1A8148D9004B6DA2 /* GoogleAppResult.m */; };
 		5D528EA21A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D528EA01A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m */; };
 		5D528EA51A814AC4004B6DA2 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D528EA41A814AC4004B6DA2 /* Constants.m */; };
+		5D528EA91A815360004B6DA2 /* AppSearchBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D528EA81A815360004B6DA2 /* AppSearchBar.m */; };
 		5DEB5BF61A8123D30008F1D7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB5BF51A8123D30008F1D7 /* main.m */; };
 		5DEB5BF91A8123D30008F1D7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB5BF81A8123D30008F1D7 /* AppDelegate.m */; };
 		5DEB5BFF1A8123D30008F1D7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DEB5BFD1A8123D30008F1D7 /* Main.storyboard */; };
@@ -39,6 +40,8 @@
 		5D528EA01A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleAppStoreSearchManager.m; sourceTree = "<group>"; };
 		5D528EA31A814AC4004B6DA2 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		5D528EA41A814AC4004B6DA2 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		5D528EA71A815360004B6DA2 /* AppSearchBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppSearchBar.h; sourceTree = "<group>"; };
+		5D528EA81A815360004B6DA2 /* AppSearchBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppSearchBar.m; sourceTree = "<group>"; };
 		5DEB5BF01A8123D30008F1D7 /* App Search with Google.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "App Search with Google.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DEB5BF41A8123D30008F1D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DEB5BF51A8123D30008F1D7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -107,6 +110,19 @@
 			name = Google;
 			sourceTree = "<group>";
 		};
+		5D528EA61A815335004B6DA2 /* AppSearch TableView */ = {
+			isa = PBXGroup;
+			children = (
+				5DEB5C1D1A8134E60008F1D7 /* AppSearchTableViewController.h */,
+				5DEB5C1E1A8134E60008F1D7 /* AppSearchTableViewController.m */,
+				5DEB5C201A8136110008F1D7 /* AppSearchResultTableViewCell.h */,
+				5DEB5C211A8136110008F1D7 /* AppSearchResultTableViewCell.m */,
+				5D528EA71A815360004B6DA2 /* AppSearchBar.h */,
+				5D528EA81A815360004B6DA2 /* AppSearchBar.m */,
+			);
+			name = "AppSearch TableView";
+			sourceTree = "<group>";
+		};
 		5DEB5BE71A8123D30008F1D7 = {
 			isa = PBXGroup;
 			children = (
@@ -173,10 +189,7 @@
 			children = (
 				5DEB5BFD1A8123D30008F1D7 /* Main.storyboard */,
 				5DEB5C021A8123D30008F1D7 /* LaunchScreen.xib */,
-				5DEB5C1D1A8134E60008F1D7 /* AppSearchTableViewController.h */,
-				5DEB5C1E1A8134E60008F1D7 /* AppSearchTableViewController.m */,
-				5DEB5C201A8136110008F1D7 /* AppSearchResultTableViewCell.h */,
-				5DEB5C211A8136110008F1D7 /* AppSearchResultTableViewCell.m */,
+				5D528EA61A815335004B6DA2 /* AppSearch TableView */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -329,6 +342,7 @@
 				5D528EA21A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m in Sources */,
 				5DEB5BF61A8123D30008F1D7 /* main.m in Sources */,
 				5DEB5C221A8136110008F1D7 /* AppSearchResultTableViewCell.m in Sources */,
+				5D528EA91A815360004B6DA2 /* AppSearchBar.m in Sources */,
 				5D528EA51A814AC4004B6DA2 /* Constants.m in Sources */,
 				5DEB5C1F1A8134E60008F1D7 /* AppSearchTableViewController.m in Sources */,
 			);

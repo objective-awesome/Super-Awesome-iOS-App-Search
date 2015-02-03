@@ -10,6 +10,8 @@
 
 #import "GoogleAppStoreSearchManager.h"
 #import "GoogleAppStoreSearchManagerDelegate.h"
+#import "GoogleAppResult.h"
+#import "AppSearchResultTableViewCell.h"
 
 
 @interface AppSearchTableViewController () <UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate>
@@ -85,11 +87,23 @@
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"TableView Did Select Row at IndexPath: %@", indexPath);
+    GoogleAppResult *app = self.resultsStore[indexPath.row];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:app.url]];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return nil;
+    AppSearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([AppSearchResultTableViewCell class])];
+    GoogleAppResult *app = self.resultsStore[indexPath.row];
+    
+    if (app != nil) {
+        cell.nameLabel.text = app.name;
+        cell.urlLabel.text = app.url;
+    } else {
+        cell.nameLabel.text = @"";
+        cell.urlLabel.text = @"";
+    }
+    
+    return cell;
 }
 
 
@@ -129,7 +143,7 @@
 
 // called when text starts editing
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    
+    self.searchController.searchBar.showsCancelButton = NO;
 }
 
 // called when text ends editing
