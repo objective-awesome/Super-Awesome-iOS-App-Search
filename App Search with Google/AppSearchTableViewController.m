@@ -22,6 +22,7 @@
 
 @property (nonatomic, strong) GoogleAppStoreSearchManager *searchManager;
 @property (nonatomic, strong) NSArray *resultsStore;
+@property (nonatomic, assign) BOOL loading;
 
 @end
 

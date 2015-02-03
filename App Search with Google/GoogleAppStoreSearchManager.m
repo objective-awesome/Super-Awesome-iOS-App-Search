@@ -53,15 +53,12 @@
 
     NSString *scopeString = nil;
     switch (scope) {
-        case DeviceScopeiPad:
+        case DeviceScopeiPad: {
             scopeString = @"ipad";
-            break;
-        case DeviceScopeiPhone:
+        } break;
+        case DeviceScopeiPhone: {
             scopeString = @"iphone";
-            break;
-        default: // TODO: Not necessary, remove
-            scopeString = @"iphone";
-            break;
+        } break;
     }
     
     NSString *firstTerm = [NSString stringWithFormat:@"site:itunes.apple.com+%@", scopeString];
