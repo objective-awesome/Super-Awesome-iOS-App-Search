@@ -10,12 +10,20 @@
 
 #import <SpinKit/RTSpinKitView.h>
 #import <MBProgressHUD/MBProgressHUD.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
 
 #import "GoogleAppStoreSearchManager.h"
 #import "GoogleAppStoreSearchManagerDelegate.h"
 #import "GoogleAppResult.h"
 #import "AppSearchResultTableViewCell.h"
 #import "UIColor+Utilities.h"
+
+
+#ifdef DEBUG
+static const int ddLogLevel = DDLogLevelDebug;
+#else
+static const int ddLogLevel = DDLogLevelError;
+#endif
 
 
 @interface AppSearchTableViewController () <UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate>
@@ -144,7 +152,7 @@
 
 // called when text changes (including clear)
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    NSLog(@"Search Bar Text did Change: %@", searchText);
+    DDLogDebug(@"Search Bar Text did Change: %@", searchText);
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
