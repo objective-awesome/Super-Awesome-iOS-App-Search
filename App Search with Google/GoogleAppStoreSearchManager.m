@@ -64,7 +64,7 @@
             break;
     }
     
-    NSString *firstTerm = [NSString stringWithFormat:@"itunes.apple.com+%@", scopeString];
+    NSString *firstTerm = [NSString stringWithFormat:@"site:itunes.apple.com+%@", scopeString];
     
     [urlString appendString:firstTerm];
     
