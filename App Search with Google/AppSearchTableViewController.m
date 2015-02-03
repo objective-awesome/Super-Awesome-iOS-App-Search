@@ -14,7 +14,7 @@
 #import "AppSearchResultTableViewCell.h"
 
 
-@interface AppSearchTableViewController () <UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate>
+@interface AppSearchTableViewController () <UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate>
 
 @property (nonatomic, strong) UISearchController *searchController;
 @property (nonatomic, strong) UISegmentedControl *scopeSegmentedControl;
@@ -35,9 +35,7 @@
     
     // Set up the search controller
     self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-    self.searchController.delegate = self;
     self.searchController.hidesNavigationBarDuringPresentation = NO;
-    self.searchController.searchResultsUpdater = self;
     self.navigationItem.titleView = self.searchController.searchBar;
     
     // Set up the search bar
@@ -107,49 +105,8 @@
 }
 
 
-#pragma mark - UISearchControllerDelegate
-
-//- (void)willPresentSearchController:(UISearchController *)searchController {
-//
-//}
-//
-//- (void)didPresentSearchController:(UISearchController *)searchController {
-//
-//}
-//
-//- (void)willDismissSearchController:(UISearchController *)searchController {
-//
-//}
-//
-//- (void)didDismissSearchController:(UISearchController *)searchController {
-//
-//}
-
-// Called after the search controller's search bar has agreed to begin editing or when 'active' is set to YES. If you choose not to present the controller yourself or do not implement this method, a default presentation is performed on your behalf.
-//- (void)presentSearchController:(UISearchController *)searchController {
-//
-//}
-
-
-#pragma mark - UISearchResultsUpdating
-
-- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
-    NSLog(@"Update Search Results for Search Controller: %@", searchController);
-}
-
-
 // TODO: Separate objects to handle this stuff, similar to table view data sources?
 #pragma mark - UISearchBarDelegate
-
-// called when text starts editing
-- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    self.searchController.searchBar.showsCancelButton = NO;
-}
-
-// called when text ends editing
-- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    
-}
 
 // called when text changes (including clear)
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
