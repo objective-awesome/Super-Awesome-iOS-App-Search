@@ -17,6 +17,8 @@
 
 @interface GoogleAppStoreSearchManager ()
 @property (strong, nonatomic) UIWebView *web;
+@property (strong, nonatomic) NSMutableSet *tasks;
+@property (strong, nonatomic) NSMutableArray *results;
 @end
 
 @implementation GoogleAppStoreSearchManager
@@ -26,6 +28,8 @@
 - (instancetype)initWithDelegate:(id<GoogleAppStoreSearchManagerDelegate>)delegate {
     self = [super init];
     if (self) {
+        _tasks = [[NSMutableSet alloc] init];
+        _results = [[NSMutableArray alloc] init];
         _delegate = delegate;
     }
     return self;
@@ -76,18 +80,55 @@
     return urlString;
 }
 
++ (NSString *)getAppIdFromiTunesUrl:(NSString *)urlString {
+    NSURLComponents *components = [NSURLComponents componentsWithString:urlString];
+    NSArray *pathComponents = [components.path componentsSeparatedByString:@"/"];
+    NSLog(@"%@", pathComponents);
+    NSString *idComponent = pathComponents.lastObject;
+    NSString *id = [idComponent substringFromIndex:2];
+    return id;
+}
+
 #pragma mark - UIWebViewDelegate Methods
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
     NSString *html = [webView stringByEvaluatingJavaScriptFromString:
                       @"document.body.innerHTML"];
     NSError *err = nil;
+    self.results = [[NSMutableArray alloc] init];
     ONOXMLDocument *doc = [ONOXMLDocument HTMLDocumentWithString:html encoding:NSUTF8StringEncoding error:&err];
-    NSMutableArray *appResults = [[NSMutableArray alloc] init];
     for (ONOXMLElement *element in [doc CSS:@"h3.r a"]) {
-        GoogleAppResult *result = [[GoogleAppResult alloc] initWithUrl:element.attributes[@"href"] name:element.stringValue];
-        [appResults addObject:result];
+        NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", [GoogleAppStoreSearchManager getAppIdFromiTunesUrl:element.attributes[@"href"]]];
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        AFHTTPRequestOperation *task = [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+            NSString *errorMessage = (NSString *)responseObject[@"errorMessage"];
+            NSArray *results = (NSArray *)responseObject[@"results"];
+            if (!errorMessage) {
+                for (NSDictionary *result in results) {
+                    NSString *title = (NSString *)result[@"artistName"];
+                    NSNumber *ratingCount = (NSNumber *)result[@"userRatingCount"];
+                    NSNumber *rating = (NSNumber *)result[@"averageUserRating"];
+                    NSString *itunesUrl = (NSString *)result[@"trackViewUrl"];
+                    NSNumber *price = (NSNumber *)result[@"price"];
+                    GoogleAppResult *appResult = [[GoogleAppResult alloc] initWithUrl:itunesUrl name:title ratingCount:ratingCount rating:rating price:price];
+                    NSLog(@"%@, %@, %@, %@, %@", title, ratingCount, rating, itunesUrl, price);
+                    [self.results addObject:appResult];
+                }
+            }
+            
+            [self.tasks removeObject:operation];
+            if (self.tasks.count == 0) {
+                [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error: %@", error);
+            [self.tasks removeObject:operation];
+            if (self.tasks.count == 0) {
+                [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
+            }
+        }];
+        [self.tasks addObject:task];
+        [task start];
     }
-    [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:appResults]];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {

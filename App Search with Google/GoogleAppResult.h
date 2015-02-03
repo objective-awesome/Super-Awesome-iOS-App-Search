@@ -11,6 +11,9 @@
 @interface GoogleAppResult : NSObject
 @property (nonatomic, strong, readonly) NSString *url;
 @property (nonatomic, strong, readonly) NSString *name;
+@property (nonatomic, strong, readonly) NSNumber *ratingCount;
+@property (nonatomic, strong, readonly) NSNumber *rating;
+@property (nonatomic, strong, readonly) NSNumber *price;
 
-- (instancetype)initWithUrl:(NSString *)url name:(NSString *)name;
+- (instancetype)initWithUrl:(NSString *)url name:(NSString *)name ratingCount:(NSNumber *)count rating:(NSNumber *)rating price:(NSNumber *)price;
 @end
