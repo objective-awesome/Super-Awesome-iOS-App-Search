@@ -73,7 +73,7 @@ static const int ddLogLevel = DDLogLevelError;
 - (void)invalidateTasks {
     DDLogInfo(@"Invalidate all google app search tasks");
     [NetworkActivityIndicator decrementActivityCount];
-    [self.webView stopLoading];
+//    [self.webView stopLoading];
     
     if (self.tasks.allKeys.count > 0) {
         DDLogDebug(@"Invalidating %@ tasks", @(self.tasks.allKeys.count));
@@ -196,6 +196,7 @@ static const int ddLogLevel = DDLogLevelError;
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    DDLogWarn(@"WebView request did fail load");
     [self.delegate appSearchDidFailWithError:error];
 }
 

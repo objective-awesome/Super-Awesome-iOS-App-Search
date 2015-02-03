@@ -90,7 +90,7 @@ static const int ddLogLevel = DDLogLevelError;
 - (void)setLoading:(BOOL)loading {
     _loading = loading;
     
-    if (_loading) {
+    if (_loading && ([MBProgressHUD allHUDsForView:self.view].count == 0)) {
         RTSpinKitView *spinner = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleWave color:[UIColor whiteColor] spinnerSize:37.0];
         
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
@@ -128,6 +128,10 @@ static const int ddLogLevel = DDLogLevelError;
 
 - (void)appSearchDidSucceedWithResults:(NSArray *)apps {
     DDLogInfo(@"App Search succeeded");
+    if (apps.count == 0) {
+        return;
+    }
+    
     self.resultsStore = [apps sortedArrayUsingComparator:^NSComparisonResult(GoogleAppResult *obj1, GoogleAppResult *obj2) {
         return [obj1.rank compare:obj2.rank];
     }];
@@ -185,13 +189,14 @@ static const int ddLogLevel = DDLogLevelError;
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     DDLogDebug(@"Search Bar Text did Change: %@", searchText);
     
-    if (self.inputLimiter != nil) {
-        [self.inputLimiter invalidate];
-        self.inputLimiter = nil;
-    }
-    
-    self.inputLimiter = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(search) userInfo:nil repeats:NO];
-    [[NSRunLoop mainRunLoop] addTimer:self.inputLimiter forMode:NSDefaultRunLoopMode];
+    // TODO This is done broke
+//    if (self.inputLimiter != nil) {
+//        [self.inputLimiter invalidate];
+//        self.inputLimiter = nil;
+//    }
+//    
+//    self.inputLimiter = [NSTimer timerWithTimeInterval:1.0 target:self selector:@selector(search) userInfo:nil repeats:NO];
+//    [[NSRunLoop mainRunLoop] addTimer:self.inputLimiter forMode:NSDefaultRunLoopMode];
 }
 
 - (void)search {
