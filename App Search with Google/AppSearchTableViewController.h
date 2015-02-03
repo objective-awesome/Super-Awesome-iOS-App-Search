@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  AppSearchTableViewController.h
 //  App Search with Google
 //
 //  Created by Joel Fischer on 2/3/15.
@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
-
+@interface AppSearchTableViewController : UITableViewController
 
 @end
-

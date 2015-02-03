@@ -1,25 +1,23 @@
 //
-//  ViewController.m
+//  AppSearchTableViewController.m
 //  App Search with Google
 //
 //  Created by Joel Fischer on 2/3/15.
 //  Copyright (c) 2015 objective-awesome. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "AppSearchTableViewController.h"
 
-@interface ViewController () <UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate>
+@interface AppSearchTableViewController () <UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate>
 
 @property (nonatomic, strong) UISearchController *searchController;
 
 @end
 
 
-@implementation ViewController
+@implementation AppSearchTableViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
-    
     // Set up the search controller
     self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     self.searchController.delegate = self;
@@ -34,32 +32,51 @@
     [searchBar setKeyboardAppearance:UIKeyboardAppearanceDark];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+// TODO: Separate objects. No massive VC.
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
 }
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 0;
+}
+
+
+#pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"TableView Did Select Row at IndexPath: %@", indexPath);
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return nil;
+}
+
 
 #pragma mark - UISearchControllerDelegate
 
 //- (void)willPresentSearchController:(UISearchController *)searchController {
-//    
+//
 //}
 //
 //- (void)didPresentSearchController:(UISearchController *)searchController {
-//    
+//
 //}
 //
 //- (void)willDismissSearchController:(UISearchController *)searchController {
-//    
+//
 //}
 //
 //- (void)didDismissSearchController:(UISearchController *)searchController {
-//    
+//
 //}
 
 // Called after the search controller's search bar has agreed to begin editing or when 'active' is set to YES. If you choose not to present the controller yourself or do not implement this method, a default presentation is performed on your behalf.
 //- (void)presentSearchController:(UISearchController *)searchController {
-//    
+//
 //}
 
 
