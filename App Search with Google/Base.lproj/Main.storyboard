@@ -4,27 +4,6 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
-        <scene sceneID="tne-QT-ifu">
-            <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="I96-FE-eI7"/>
-                    <connections>
-                        <outlet property="searchDisplayController" destination="dKo-po-a9v" id="Mmh-ay-dvp"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <searchDisplayController id="dKo-po-a9v">
-                    <connections>
-                        <outlet property="delegate" destination="BYZ-38-t0r" id="jaq-5B-qNz"/>
-                        <outlet property="searchContentsController" destination="BYZ-38-t0r" id="3dy-Qn-jSj"/>
-                        <outlet property="searchResultsDataSource" destination="BYZ-38-t0r" id="t6G-gS-v0o"/>
-                        <outlet property="searchResultsDelegate" destination="BYZ-38-t0r" id="zc2-63-RSX"/>
-                    </connections>
-                </searchDisplayController>
-            </objects>
-            <point key="canvasLocation" x="1797" y="377"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="zHW-sn-oRT">
             <objects>
@@ -36,12 +15,39 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="ex6-x5-8j0"/>
+                        <segue destination="8hj-Vo-hE0" kind="relationship" relationship="rootViewController" id="XCz-m5-LwY"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ijI-hP-SHm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1086" y="377"/>
+        </scene>
+        <!--App Search Table View Controller-->
+        <scene sceneID="Djn-db-mCH">
+            <objects>
+                <tableViewController id="8hj-Vo-hE0" customClass="AppSearchTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Lob-7o-nec">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="7EJ-KG-0jq">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7EJ-KG-0jq" id="LOe-UT-V9g">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="8hj-Vo-hE0" id="9nH-hp-p2C"/>
+                            <outlet property="delegate" destination="8hj-Vo-hE0" id="8On-0A-lUi"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="YIN-Mj-JPj"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SxM-Wj-EG7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1776" y="377"/>
         </scene>
     </scenes>
 </document>
