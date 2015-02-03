@@ -16,7 +16,7 @@
 
 @interface AppSearchTableViewController () <UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate>
 
-@property (nonatomic, strong) UISearchController *searchController;
+@property (nonatomic, strong) UISearchBar *searchBar;
 @property (nonatomic, strong) UISegmentedControl *scopeSegmentedControl;
 @property (nonatomic, strong) UIBarButtonItem *scopeBarButtonItem;
 
@@ -33,18 +33,14 @@
     self.resultsStore = @[];
     self.searchManager = [[GoogleAppStoreSearchManager alloc] initWithDelegate:self];
     
-    // Set up the search controller
-    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-    self.searchController.hidesNavigationBarDuringPresentation = NO;
-    self.navigationItem.titleView = self.searchController.searchBar;
-    
     // Set up the search bar
-    UISearchBar *searchBar = self.searchController.searchBar;
-    searchBar.delegate = self;
-    searchBar.showsCancelButton = NO;
-    searchBar.placeholder = NSLocalizedString(@"Search for an App", nil);
-    [searchBar setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [searchBar setAutocorrectionType:UITextAutocorrectionTypeNo];
+    self.searchBar = [[UISearchBar alloc] init];
+    self.searchBar.delegate = self;
+    self.searchBar.showsCancelButton = NO;
+    self.searchBar.placeholder = NSLocalizedString(@"Search for an App", nil);
+    [self.searchBar setKeyboardAppearance:UIKeyboardAppearanceDark];
+    [self.searchBar setAutocorrectionType:UITextAutocorrectionTypeNo];
+    self.navigationItem.titleView = self.searchBar;
     
     // Set up the scope control
     self.scopeSegmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"iPhone", nil), NSLocalizedString(@"iPad", nil)]];
@@ -130,6 +126,8 @@
     }
     
     [self.searchManager getAppsForSearchTerm:searchString withScope:scope];
+    
+    [self.searchBar resignFirstResponder];
 }
 
 @end
