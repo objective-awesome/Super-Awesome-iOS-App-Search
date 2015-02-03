@@ -59,6 +59,7 @@
 #pragma mark - GoogleAppStoreSearchManagerDelegate
 
 - (void)appSearchDidSucceedWithResults:(NSArray *)apps {
+    NSLog(@"App search results to VC: %@", apps);
     self.resultsStore = apps;
     
     [self.tableView reloadData];
@@ -156,11 +157,8 @@
             NSAssert(NO, @"Device Scope type not handled: %@", @(self.scopeSegmentedControl.selectedSegmentIndex));
         } break;
     }
-}
-
-// called when cancel button pressed
-- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-    NSLog(@"Search Bar Cancel Clicked");
+    
+    [self.searchManager getAppsForSearchTerm:searchString withScope:scope];
 }
 
 @end

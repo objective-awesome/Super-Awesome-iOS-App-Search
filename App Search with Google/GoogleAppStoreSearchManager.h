@@ -19,7 +19,16 @@
 
 @property (strong, nonatomic) id<GoogleAppStoreSearchManagerDelegate> delegate;
 
-- (void)getAppsForSearchTerm:(NSString *)term withScope:(DeviceScope)scope;
 - (instancetype)initWithDelegate:(id<GoogleAppStoreSearchManagerDelegate>)delegate;
+
+/**
+ *  Request that the manager start to search for results.
+ *
+ *  @note This will return results to the delegate
+ *
+ *  @param term  The string to be searched
+ *  @param scope The scope of the search, iPhone or iPad
+ */
+- (void)getAppsForSearchTerm:(NSString *)term withScope:(DeviceScope)scope;
 
 @end
