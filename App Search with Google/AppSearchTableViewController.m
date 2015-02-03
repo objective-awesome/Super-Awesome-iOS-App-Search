@@ -46,6 +46,9 @@ static const int ddLogLevel = DDLogLevelError;
     self.resultsStore = @[];
     self.searchManager = [[GoogleAppStoreSearchManager alloc] initWithDelegate:self];
     
+    // Set nav controller bar style to change the status bar style to light
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    
     // Set up some things about our tableview
     self.tableView.scrollsToTop = YES;
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
@@ -53,11 +56,10 @@ static const int ddLogLevel = DDLogLevelError;
     // Set up the search bar
     self.searchBar = [[UISearchBar alloc] init];
     self.searchBar.delegate = self;
+    self.searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
+    self.searchBar.keyboardAppearance = UIKeyboardAppearanceDark;
     self.searchBar.showsCancelButton = NO;
     self.searchBar.placeholder = NSLocalizedString(@"Search for an App", nil);
-    [self.searchBar setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [self.searchBar setAutocorrectionType:UITextAutocorrectionTypeNo];
-    self.navigationItem.titleView = self.searchBar;
     
     // Set up the scope control
     self.scopeSegmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"iPhone", nil), NSLocalizedString(@"iPad", nil)]];
@@ -72,9 +74,13 @@ static const int ddLogLevel = DDLogLevelError;
     self.navigationController.navigationBar.translucent = NO;
     
     self.scopeSegmentedControl.tintColor = [UIColor whiteColor];
-    
-    self.searchBar.barTintColor = [UIColor colorWithRGBRed:231 green:76 blue:60 alpha:1.0];
-    self.searchBar.tintColor = [UIColor whiteColor];
+        
+    self.searchBar.translucent = YES;
+    self.navigationItem.titleView = self.searchBar;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [self.searchBar becomeFirstResponder];
 }
 
 
