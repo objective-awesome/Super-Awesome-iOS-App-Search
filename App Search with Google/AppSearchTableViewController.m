@@ -11,6 +11,8 @@
 @interface AppSearchTableViewController () <UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate>
 
 @property (nonatomic, strong) UISearchController *searchController;
+@property (nonatomic, strong) UISegmentedControl *scopeSegmentedControl;
+@property (nonatomic, strong) UIBarButtonItem *scopeBarButtonItem;
 
 @end
 
@@ -28,8 +30,14 @@
     // Set up the search bar
     UISearchBar *searchBar = self.searchController.searchBar;
     searchBar.delegate = self;
+    searchBar.showsCancelButton = NO;
     searchBar.placeholder = NSLocalizedString(@"Search for an App", nil);
     [searchBar setKeyboardAppearance:UIKeyboardAppearanceDark];
+    [searchBar setAutocorrectionType:UITextAutocorrectionTypeNo];
+    
+    self.scopeSegmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"iPhone", nil), NSLocalizedString(@"iPad", nil)]];
+    self.scopeBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.scopeSegmentedControl];
+    self.navigationItem.rightBarButtonItem = self.scopeBarButtonItem;
 }
 
 
