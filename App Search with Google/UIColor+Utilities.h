@@ -1,5 +1,5 @@
 //
-//  AppSearchResultTableViewCell.h
+//  UIColor+Utilities.h
 //  App Search with Google
 //
 //  Created by Joel Fischer on 2/3/15.
@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AppSearchResultTableViewCell : UITableViewCell
+@interface UIColor (Utilities)
 
-@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
++ (UIColor *)colorWithRGBRed:(Byte)red green:(Byte)green blue:(Byte)blue alpha:(CGFloat)alpha;
 
 @end

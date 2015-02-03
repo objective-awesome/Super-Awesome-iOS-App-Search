@@ -43,25 +43,15 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F0o-Jy-Abf">
-                                            <rect key="frame" x="8" y="29" width="584" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="rW3-Bo-R5m" firstAttribute="top" secondItem="LOe-UT-V9g" secondAttribute="topMargin" constant="1" id="471-O1-X8x"/>
                                         <constraint firstItem="rW3-Bo-R5m" firstAttribute="leading" secondItem="LOe-UT-V9g" secondAttribute="leadingMargin" id="Qk1-QR-TAY"/>
                                         <constraint firstItem="rW3-Bo-R5m" firstAttribute="trailing" secondItem="LOe-UT-V9g" secondAttribute="trailingMargin" id="ae6-tI-ucr"/>
-                                        <constraint firstItem="F0o-Jy-Abf" firstAttribute="trailing" secondItem="LOe-UT-V9g" secondAttribute="trailingMargin" id="jVf-4v-ekq"/>
-                                        <constraint firstItem="F0o-Jy-Abf" firstAttribute="leading" secondItem="LOe-UT-V9g" secondAttribute="leadingMargin" id="kdc-hx-lJq"/>
-                                        <constraint firstItem="F0o-Jy-Abf" firstAttribute="top" secondItem="rW3-Bo-R5m" secondAttribute="bottom" constant="-2" id="t3C-dO-RXC"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="nameLabel" destination="rW3-Bo-R5m" id="bs6-vk-TQc"/>
-                                    <outlet property="urlLabel" destination="F0o-Jy-Abf" id="qEj-ZE-cN2"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
