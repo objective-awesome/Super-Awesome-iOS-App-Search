@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		49F29887C7629B08796541AD /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A379D6D0D9F8DA48DF7997 /* libPods.a */; };
+		5D528EA11A8148D9004B6DA2 /* GoogleAppResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D528E9E1A8148D9004B6DA2 /* GoogleAppResult.m */; };
+		5D528EA21A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D528EA01A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m */; };
 		5DEB5BF61A8123D30008F1D7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB5BF51A8123D30008F1D7 /* main.m */; };
 		5DEB5BF91A8123D30008F1D7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB5BF81A8123D30008F1D7 /* AppDelegate.m */; };
 		5DEB5BFF1A8123D30008F1D7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DEB5BFD1A8123D30008F1D7 /* Main.storyboard */; };
@@ -30,6 +32,10 @@
 
 /* Begin PBXFileReference section */
 		01A379D6D0D9F8DA48DF7997 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D528E9D1A8148D9004B6DA2 /* GoogleAppResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAppResult.h; sourceTree = "<group>"; };
+		5D528E9E1A8148D9004B6DA2 /* GoogleAppResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleAppResult.m; sourceTree = "<group>"; };
+		5D528E9F1A8148D9004B6DA2 /* GoogleAppStoreSearchManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAppStoreSearchManager.h; sourceTree = "<group>"; };
+		5D528EA01A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleAppStoreSearchManager.m; sourceTree = "<group>"; };
 		5DEB5BF01A8123D30008F1D7 /* App Search with Google.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "App Search with Google.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DEB5BF41A8123D30008F1D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DEB5BF51A8123D30008F1D7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -77,6 +83,25 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		5D528E9B1A8148C0004B6DA2 /* App Store Search */ = {
+			isa = PBXGroup;
+			children = (
+				5D528E9C1A8148D1004B6DA2 /* Google */,
+			);
+			name = "App Store Search";
+			sourceTree = "<group>";
+		};
+		5D528E9C1A8148D1004B6DA2 /* Google */ = {
+			isa = PBXGroup;
+			children = (
+				5D528E9D1A8148D9004B6DA2 /* GoogleAppResult.h */,
+				5D528E9E1A8148D9004B6DA2 /* GoogleAppResult.m */,
+				5D528E9F1A8148D9004B6DA2 /* GoogleAppStoreSearchManager.h */,
+				5D528EA01A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m */,
+			);
+			name = Google;
+			sourceTree = "<group>";
+		};
 		5DEB5BE71A8123D30008F1D7 = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +125,7 @@
 		5DEB5BF21A8123D30008F1D7 /* App Search with Google */ = {
 			isa = PBXGroup;
 			children = (
+				5D528E9B1A8148C0004B6DA2 /* App Store Search */,
 				5DEB5C191A8134A00008F1D7 /* UI */,
 				5DEB5BF71A8123D30008F1D7 /* AppDelegate.h */,
 				5DEB5BF81A8123D30008F1D7 /* AppDelegate.m */,
@@ -291,7 +317,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D528EA11A8148D9004B6DA2 /* GoogleAppResult.m in Sources */,
 				5DEB5BF91A8123D30008F1D7 /* AppDelegate.m in Sources */,
+				5D528EA21A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m in Sources */,
 				5DEB5BF61A8123D30008F1D7 /* main.m in Sources */,
 				5DEB5C221A8136110008F1D7 /* AppSearchResultTableViewCell.m in Sources */,
 				5DEB5C1F1A8134E60008F1D7 /* AppSearchTableViewController.m in Sources */,
