@@ -53,6 +53,7 @@
 		5DEB5C211A8136110008F1D7 /* AppSearchResultTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppSearchResultTableViewCell.m; sourceTree = "<group>"; };
 		9075988CB0BC925BDA0CEA5C /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		AAB899C80E5BD0E7BC0CCFB9 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		D0BB59CD1A81497F001FAA2C /* GoogleAppStoreSearchManagerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleAppStoreSearchManagerDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +99,7 @@
 				5D528E9E1A8148D9004B6DA2 /* GoogleAppResult.m */,
 				5D528E9F1A8148D9004B6DA2 /* GoogleAppStoreSearchManager.h */,
 				5D528EA01A8148D9004B6DA2 /* GoogleAppStoreSearchManager.m */,
+				D0BB59CD1A81497F001FAA2C /* GoogleAppStoreSearchManagerDelegate.h */,
 			);
 			name = Google;
 			sourceTree = "<group>";
