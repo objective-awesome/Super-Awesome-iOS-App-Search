@@ -8,6 +8,7 @@
 
 #import "GoogleAppStoreSearchManager.h"
 
+#import <CocoaLumberjack/CocoaLumberjack.h>
 #import <AFNetworking/AFHTTPSessionManager.h>
 #import <AFOnoResponseSerializer.h>
 #import <Ono.h>
@@ -16,11 +17,23 @@
 #import "GoogleAppStoreSearchManagerDelegate.h"
 #import "NetworkActivityIndicator.h"
 
+
+#ifdef DEBUG
+static const int ddLogLevel = DDLogLevelDebug;
+#else
+static const int ddLogLevel = DDLogLevelError;
+#endif
+
+
 @interface GoogleAppStoreSearchManager ()
-@property (strong, nonatomic) UIWebView *web;
+
+@property (strong, nonatomic) UIWebView *webView;
 @property (strong, nonatomic) NSMutableDictionary *tasks;
 @property (strong, nonatomic) NSMutableArray *results;
+
 @end
+
+
 
 @implementation GoogleAppStoreSearchManager
 
@@ -32,14 +45,14 @@
         _tasks = [[NSMutableDictionary alloc] init];
         _results = [[NSMutableArray alloc] init];
         _delegate = delegate;
+        
+        _webView = [[UIWebView alloc] init];
+        _webView.delegate = self;
     }
     return self;
 }
 
 - (void)getAppsForSearchTerm:(NSString *)term withScope:(DeviceScope)scope {
-    self.web = [[UIWebView alloc] init];
-    self.web.delegate = self;
-    
     NSArray *terms = [term componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     NSString *urlString = [GoogleAppStoreSearchManager getUrlWithSearchTerms:terms scope:scope];
     NSURL *url = [NSURL URLWithString:urlString];
@@ -47,16 +60,20 @@
     
     [NetworkActivityIndicator incrementActivityCount];
 
-    [self.web loadRequest:requestObj];
+    [self.webView loadRequest:requestObj];
 }
 
 #pragma mark - Private Helpers
 
 + (NSString *)getUrlWithSearchTerms:(NSArray *)terms scope:(DeviceScope)scope {
     
-    NSMutableString *urlString = [[NSMutableString alloc] init];
-    [urlString appendString:@"https://www.google.com/webhp?ion=1&espv=2&ie=UTF-8#safe=active&q="];
+    NSMutableString *urlString = [[NSMutableString alloc] initWithString:@"https://www.google.com/webhp?ion=1&espv=2&ie=UTF-8#safe=active&q=site:itunes.apple.com"];
 
+    for (NSString *term in terms) {
+        [urlString appendString:@"+"];
+        [urlString appendString:term];
+    }
+    
     NSString *scopeString = nil;
     switch (scope) {
         case DeviceScopeiPad: {
@@ -66,15 +83,8 @@
             scopeString = @"iphone";
         } break;
     }
-    
-    NSString *firstTerm = [NSString stringWithFormat:@"site:itunes.apple.com+%@", scopeString];
-    
-    [urlString appendString:firstTerm];
-    
-    for (NSString *term in terms) {
-        [urlString appendString:@"+"];
-        [urlString appendString:term];
-    }
+
+    [urlString appendString:[NSString stringWithFormat:@"+%@+app", scopeString]];
     
     return urlString;
 }
@@ -87,19 +97,22 @@
         return nil;
     }
     NSString *idComponent = pathComponents.lastObject;
-    NSString *id = [idComponent substringFromIndex:2];
-    return id;
+    NSString *appId = [idComponent substringFromIndex:2];
+    
+    return appId;
 }
 
+
 #pragma mark - UIWebViewDelegate Methods
+
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-    
+    self.results = [[NSMutableArray alloc] init];
     NSString *html = [webView stringByEvaluatingJavaScriptFromString:
                       @"document.body.innerHTML"];
     NSError *err = nil;
-    self.results = [[NSMutableArray alloc] init];
     ONOXMLDocument *doc = [ONOXMLDocument HTMLDocumentWithString:html encoding:NSUTF8StringEncoding error:&err];
     NSInteger rank = 0;
+    
     for (ONOXMLElement *element in [doc CSS:@"h3.r a"]) {
         NSString *appId = [GoogleAppStoreSearchManager getAppIdFromiTunesUrl:element.attributes[@"href"]];
         if (appId == nil) {
@@ -107,35 +120,46 @@
         }
         NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", appId];
         AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+        
         NSURLSessionDataTask *task = [manager GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             NSString *errorMessage = (NSString *)responseObject[@"errorMessage"];
             NSArray *results = (NSArray *)responseObject[@"results"];
-            if (!errorMessage) {
+            DDLogVerbose(@"App Search Result: %@", results);
+            
+            if (errorMessage == nil) {
                 for (NSDictionary *result in results) {
                     NSString *title = (NSString *)result[@"trackName"];
                     NSNumber *ratingCount = (NSNumber *)result[@"userRatingCount"];
                     NSNumber *rating = (NSNumber *)result[@"averageUserRating"];
                     NSString *itunesUrl = (NSString *)result[@"trackViewUrl"];
                     NSNumber *price = (NSNumber *)result[@"price"];
+                    DDLogDebug(@"App Search Result:\n"
+                               "Title: %@\n"
+                               "Rating: %@\n"
+                               "Rating Count: %@\n"
+                               "iTunes URL: %@\n"
+                               "Price: %@\n", title, ratingCount, rating, itunesUrl, price);
+                    
                     GoogleAppResult *appResult = [[GoogleAppResult alloc] initWithUrl:itunesUrl name:title ratingCount:ratingCount rating:rating price:price rank:self.tasks[task]];
-                    NSLog(@"%@, %@, %@, %@, %@, %@", title, ratingCount, rating, itunesUrl, price, self.tasks[task]);
                     [self.results addObject:appResult];
                 }
             }
 
             [self.tasks removeObjectForKey:task];
+            
             if (self.tasks.count == 0) {
                 [NetworkActivityIndicator decrementActivityCount];
                 [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
             }
         } failure:^(NSURLSessionDataTask *task, NSError *error) {
-            NSLog(@"Error: %@", error);
             [self.tasks removeObjectForKey:task];
+            
             if (self.tasks.count == 0) {
                 [NetworkActivityIndicator decrementActivityCount];
                 [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
             }
         }];
+        
         [self.tasks setObject:@(rank++) forKey:task];
         [task resume];
     }

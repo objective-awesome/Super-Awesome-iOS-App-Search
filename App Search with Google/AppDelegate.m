@@ -7,17 +7,21 @@
 //
 
 #import "AppDelegate.h"
-#import "GoogleAppStoreSearchManager.h"
+
+#import <CocoaLumberjack/CocoaLumberjack.h>
+
 
 @interface AppDelegate ()
 
 @end
 
+
 @implementation AppDelegate
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    [DDLog addLogger:[DDTTYLogger sharedInstance]];
+    
     return YES;
 }
 

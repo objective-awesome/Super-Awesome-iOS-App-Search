@@ -10,11 +10,20 @@
 
 #import <SpinKit/RTSpinKitView.h>
 #import <MBProgressHUD/MBProgressHUD.h>
+#import <CocoaLumberjack/CocoaLumberjack.h>
 
 #import "GoogleAppStoreSearchManager.h"
 #import "GoogleAppStoreSearchManagerDelegate.h"
 #import "GoogleAppResult.h"
 #import "AppSearchResultTableViewCell.h"
+#import "UIColor+Utilities.h"
+
+
+#ifdef DEBUG
+static const int ddLogLevel = DDLogLevelDebug;
+#else
+static const int ddLogLevel = DDLogLevelError;
+#endif
 
 
 @interface AppSearchTableViewController () <UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate>
@@ -37,6 +46,10 @@
     self.resultsStore = @[];
     self.searchManager = [[GoogleAppStoreSearchManager alloc] initWithDelegate:self];
     
+    // Set up some things about our tableview
+    self.tableView.scrollsToTop = YES;
+    self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
+    
     // Set up the search bar
     self.searchBar = [[UISearchBar alloc] init];
     self.searchBar.delegate = self;
@@ -53,6 +66,15 @@
     // Position the scope control
     self.scopeBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.scopeSegmentedControl];
     self.navigationItem.rightBarButtonItem = self.scopeBarButtonItem;
+    
+    // Set up color
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRGBRed:192 green:57 blue:43 alpha:1.0];
+    self.navigationController.navigationBar.translucent = NO;
+    
+    self.scopeSegmentedControl.tintColor = [UIColor whiteColor];
+    
+    self.searchBar.barTintColor = [UIColor colorWithRGBRed:231 green:76 blue:60 alpha:1.0];
+    self.searchBar.tintColor = [UIColor whiteColor];
 }
 
 
@@ -63,7 +85,7 @@
     
     // TODO: Dim / Blur & Show SpinKit
     if (_loading) {
-        RTSpinKitView *spinner = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyle9CubeGrid color:[UIColor whiteColor] spinnerSize:37.0];
+        RTSpinKitView *spinner = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleWave color:[UIColor whiteColor] spinnerSize:37.0];
         
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         hud.square = YES;
@@ -101,27 +123,27 @@
     return self.resultsStore.count;
 }
 
-
-#pragma mark - UITableViewDelegate
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    GoogleAppResult *app = self.resultsStore[indexPath.row];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:app.url]];
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     AppSearchResultTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([AppSearchResultTableViewCell class])];
     GoogleAppResult *app = self.resultsStore[indexPath.row];
     
     if (app != nil) {
         cell.nameLabel.text = app.name;
-        cell.urlLabel.text = app.url;
     } else {
         cell.nameLabel.text = @"";
-        cell.urlLabel.text = @"";
     }
     
     return cell;
+}
+
+
+#pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.searchBar resignFirstResponder];
+    
+    GoogleAppResult *app = self.resultsStore[indexPath.row];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:app.url]];
 }
 
 
@@ -130,7 +152,7 @@
 
 // called when text changes (including clear)
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    NSLog(@"Search Bar Text did Change: %@", searchText);
+    DDLogDebug(@"Search Bar Text did Change: %@", searchText);
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
