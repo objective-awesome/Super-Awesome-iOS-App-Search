@@ -36,8 +36,18 @@
     [searchBar setAutocorrectionType:UITextAutocorrectionTypeNo];
     
     self.scopeSegmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"iPhone", nil), NSLocalizedString(@"iPad", nil)]];
+    self.scopeSegmentedControl.selectedSegmentIndex = 0;
+    [self.scopeSegmentedControl addTarget:self action:@selector(scopeSegmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
+    
     self.scopeBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.scopeSegmentedControl];
     self.navigationItem.rightBarButtonItem = self.scopeBarButtonItem;
+}
+
+
+#pragma mark - Target-Action
+
+- (void)scopeSegmentedControlValueChanged:(UISegmentedControl *)segmentedControl {
+    NSLog(@"Segmented control value changed to: %@", @(segmentedControl.selectedSegmentIndex));
 }
 
 
