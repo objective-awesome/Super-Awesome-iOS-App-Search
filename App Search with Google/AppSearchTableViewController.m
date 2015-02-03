@@ -8,6 +8,9 @@
 
 #import "AppSearchTableViewController.h"
 
+#import <SpinKit/RTSpinKitView.h>
+#import <MBProgressHUD/MBProgressHUD.h>
+
 #import "GoogleAppStoreSearchManager.h"
 #import "GoogleAppStoreSearchManagerDelegate.h"
 #import "GoogleAppResult.h"
@@ -16,12 +19,13 @@
 
 @interface AppSearchTableViewController () <UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate>
 
-@property (nonatomic, strong) UISearchController *searchController;
+@property (nonatomic, strong) UISearchBar *searchBar;
 @property (nonatomic, strong) UISegmentedControl *scopeSegmentedControl;
 @property (nonatomic, strong) UIBarButtonItem *scopeBarButtonItem;
 
 @property (nonatomic, strong) GoogleAppStoreSearchManager *searchManager;
 @property (nonatomic, strong) NSArray *resultsStore;
+@property (nonatomic, assign) BOOL loading;
 
 @end
 
@@ -33,18 +37,14 @@
     self.resultsStore = @[];
     self.searchManager = [[GoogleAppStoreSearchManager alloc] initWithDelegate:self];
     
-    // Set up the search controller
-    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-    self.searchController.hidesNavigationBarDuringPresentation = NO;
-    self.navigationItem.titleView = self.searchController.searchBar;
-    
     // Set up the search bar
-    UISearchBar *searchBar = self.searchController.searchBar;
-    searchBar.delegate = self;
-    searchBar.showsCancelButton = NO;
-    searchBar.placeholder = NSLocalizedString(@"Search for an App", nil);
-    [searchBar setKeyboardAppearance:UIKeyboardAppearanceDark];
-    [searchBar setAutocorrectionType:UITextAutocorrectionTypeNo];
+    self.searchBar = [[UISearchBar alloc] init];
+    self.searchBar.delegate = self;
+    self.searchBar.showsCancelButton = NO;
+    self.searchBar.placeholder = NSLocalizedString(@"Search for an App", nil);
+    [self.searchBar setKeyboardAppearance:UIKeyboardAppearanceDark];
+    [self.searchBar setAutocorrectionType:UITextAutocorrectionTypeNo];
+    self.navigationItem.titleView = self.searchBar;
     
     // Set up the scope control
     self.scopeSegmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"iPhone", nil), NSLocalizedString(@"iPad", nil)]];
@@ -56,17 +56,37 @@
 }
 
 
+#pragma mark - Setters
+
+- (void)setLoading:(BOOL)loading {
+    _loading = loading;
+    
+    // TODO: Dim / Blur & Show SpinKit
+    if (_loading) {
+        RTSpinKitView *spinner = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyle9CubeGrid color:[UIColor whiteColor] spinnerSize:37.0];
+        
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.square = YES;
+        hud.mode = MBProgressHUDModeCustomView;
+        hud.customView = spinner;
+    } else {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }
+}
+
+
 #pragma mark - GoogleAppStoreSearchManagerDelegate
 
 - (void)appSearchDidSucceedWithResults:(NSArray *)apps {
-    NSLog(@"App search results to VC: %@", apps);
     self.resultsStore = apps;
     
     [self.tableView reloadData];
+    self.loading = NO;
 }
 
 - (void)appSearchDidFailWithError:(NSError *)error {
     // TODO: Show a failure state on UI
+    self.loading = NO;
 }
 
 
@@ -130,6 +150,9 @@
     }
     
     [self.searchManager getAppsForSearchTerm:searchString withScope:scope];
+    self.loading = YES;
+    
+    [self.searchBar resignFirstResponder];
 }
 
 @end

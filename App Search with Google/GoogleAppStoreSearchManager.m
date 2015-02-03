@@ -14,6 +14,7 @@
 
 #import "GoogleAppResult.h"
 #import "GoogleAppStoreSearchManagerDelegate.h"
+#import "NetworkActivityIndicator.h"
 
 @interface GoogleAppStoreSearchManager ()
 @property (strong, nonatomic) UIWebView *web;
@@ -40,11 +41,11 @@
     self.web.delegate = self;
     
     NSArray *terms = [term componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    
     NSString *urlString = [GoogleAppStoreSearchManager getUrlWithSearchTerms:terms scope:scope];
-    
     NSURL *url = [NSURL URLWithString:urlString];
     NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
+    
+    [NetworkActivityIndicator incrementActivityCount];
     [self.web loadRequest:requestObj];
 }
 
@@ -57,15 +58,12 @@
 
     NSString *scopeString = nil;
     switch (scope) {
-        case DeviceScopeiPad:
+        case DeviceScopeiPad: {
             scopeString = @"ipad";
-            break;
-        case DeviceScopeiPhone:
+        } break;
+        case DeviceScopeiPhone: {
             scopeString = @"iphone";
-            break;
-        default: // TODO: Not necessary, remove
-            scopeString = @"iphone";
-            break;
+        } break;
     }
     
     NSString *firstTerm = [NSString stringWithFormat:@"site:itunes.apple.com+%@", scopeString];
@@ -91,6 +89,8 @@
 
 #pragma mark - UIWebViewDelegate Methods
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [NetworkActivityIndicator decrementActivityCount];
+    
     NSString *html = [webView stringByEvaluatingJavaScriptFromString:
                       @"document.body.innerHTML"];
     NSError *err = nil;
@@ -132,6 +132,8 @@
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    [NetworkActivityIndicator decrementActivityCount];
+    
     [self.delegate appSearchDidFailWithError:error];
 }
 @end
