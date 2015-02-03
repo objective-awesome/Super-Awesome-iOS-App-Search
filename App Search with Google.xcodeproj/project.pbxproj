@@ -129,9 +129,7 @@
 				5DEB5C191A8134A00008F1D7 /* UI */,
 				5DEB5BF71A8123D30008F1D7 /* AppDelegate.h */,
 				5DEB5BF81A8123D30008F1D7 /* AppDelegate.m */,
-				5DEB5BFD1A8123D30008F1D7 /* Main.storyboard */,
 				5DEB5C001A8123D30008F1D7 /* Images.xcassets */,
-				5DEB5C021A8123D30008F1D7 /* LaunchScreen.xib */,
 				5DEB5BF31A8123D30008F1D7 /* Supporting Files */,
 			);
 			path = "App Search with Google";
@@ -166,6 +164,8 @@
 		5DEB5C191A8134A00008F1D7 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				5DEB5BFD1A8123D30008F1D7 /* Main.storyboard */,
+				5DEB5C021A8123D30008F1D7 /* LaunchScreen.xib */,
 				5DEB5C1D1A8134E60008F1D7 /* AppSearchTableViewController.h */,
 				5DEB5C1E1A8134E60008F1D7 /* AppSearchTableViewController.m */,
 				5DEB5C201A8136110008F1D7 /* AppSearchResultTableViewCell.h */,
