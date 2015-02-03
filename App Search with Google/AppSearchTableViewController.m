@@ -37,6 +37,7 @@ static const int ddLogLevel = DDLogLevelError;
 @property (nonatomic, assign) BOOL loading;
 @property (nonatomic, assign, readonly) DeviceScope scope;
 @property (nonatomic, strong) NSTimer *inputLimiter;
+@property (nonatomic, strong) NSString *lastSearchedString;
 
 @end
 
@@ -89,7 +90,6 @@ static const int ddLogLevel = DDLogLevelError;
 - (void)setLoading:(BOOL)loading {
     _loading = loading;
     
-    // TODO: Dim / Blur & Show SpinKit
     if (_loading) {
         RTSpinKitView *spinner = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleWave color:[UIColor whiteColor] spinnerSize:37.0];
         
@@ -195,15 +195,16 @@ static const int ddLogLevel = DDLogLevelError;
 }
 
 - (void)search {
-    [self.searchManager getAppsForSearchTerm:self.searchBar.text withScope:self.scope];
+    if (![self.lastSearchedString isEqualToString:self.searchBar.text]) {
+        self.lastSearchedString = self.searchBar.text;
+        [self.searchManager getAppsForSearchTerm:self.searchBar.text withScope:self.scope];
+        
+        self.loading = YES;
+    }
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
-    NSString *searchString = searchBar.text;
-    
-    [self.searchManager getAppsForSearchTerm:searchString withScope:self.scope];
-    self.loading = YES;
-    
+    [self search];
     [self.searchBar resignFirstResponder];
 }
 
