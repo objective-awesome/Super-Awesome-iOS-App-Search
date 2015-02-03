@@ -8,7 +8,7 @@
 
 #import "GoogleAppStoreSearchManager.h"
 
-#import <AFHTTPRequestOperationManager.h>
+#import <AFNetworking/AFHTTPSessionManager.h>
 #import <AFOnoResponseSerializer.h>
 #import <Ono.h>
 
@@ -18,7 +18,7 @@
 
 @interface GoogleAppStoreSearchManager ()
 @property (strong, nonatomic) UIWebView *web;
-@property (strong, nonatomic) NSMutableSet *tasks;
+@property (strong, nonatomic) NSMutableDictionary *tasks;
 @property (strong, nonatomic) NSMutableArray *results;
 @end
 
@@ -29,7 +29,7 @@
 - (instancetype)initWithDelegate:(id<GoogleAppStoreSearchManagerDelegate>)delegate {
     self = [super init];
     if (self) {
-        _tasks = [[NSMutableSet alloc] init];
+        _tasks = [[NSMutableDictionary alloc] init];
         _results = [[NSMutableArray alloc] init];
         _delegate = delegate;
     }
@@ -96,10 +96,11 @@
     NSError *err = nil;
     self.results = [[NSMutableArray alloc] init];
     ONOXMLDocument *doc = [ONOXMLDocument HTMLDocumentWithString:html encoding:NSUTF8StringEncoding error:&err];
+    NSInteger rank = 0;
     for (ONOXMLElement *element in [doc CSS:@"h3.r a"]) {
         NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", [GoogleAppStoreSearchManager getAppIdFromiTunesUrl:element.attributes[@"href"]]];
-        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-        AFHTTPRequestOperation *task = [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+        NSURLSessionDataTask *task = [manager GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             NSString *errorMessage = (NSString *)responseObject[@"errorMessage"];
             NSArray *results = (NSArray *)responseObject[@"results"];
             if (!errorMessage) {
@@ -109,27 +110,27 @@
                     NSNumber *rating = (NSNumber *)result[@"averageUserRating"];
                     NSString *itunesUrl = (NSString *)result[@"trackViewUrl"];
                     NSNumber *price = (NSNumber *)result[@"price"];
-                    GoogleAppResult *appResult = [[GoogleAppResult alloc] initWithUrl:itunesUrl name:title ratingCount:ratingCount rating:rating price:price];
-                    NSLog(@"%@, %@, %@, %@, %@", title, ratingCount, rating, itunesUrl, price);
+                    GoogleAppResult *appResult = [[GoogleAppResult alloc] initWithUrl:itunesUrl name:title ratingCount:ratingCount rating:rating price:price rank:self.tasks[task]];
+                    NSLog(@"%@, %@, %@, %@, %@, %@", title, ratingCount, rating, itunesUrl, price, self.tasks[task]);
                     [self.results addObject:appResult];
                 }
             }
-            
-            [self.tasks removeObject:operation];
+
+            [self.tasks removeObjectForKey:task];
             if (self.tasks.count == 0) {
                 [NetworkActivityIndicator decrementActivityCount];
                 [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
             }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        } failure:^(NSURLSessionDataTask *task, NSError *error) {
             NSLog(@"Error: %@", error);
-            [self.tasks removeObject:operation];
+            [self.tasks removeObjectForKey:task];
             if (self.tasks.count == 0) {
                 [NetworkActivityIndicator decrementActivityCount];
                 [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
             }
         }];
-        [self.tasks addObject:task];
-        [task start];
+        [self.tasks setObject:@(rank++) forKey:task];
+        [task resume];
     }
 }
 

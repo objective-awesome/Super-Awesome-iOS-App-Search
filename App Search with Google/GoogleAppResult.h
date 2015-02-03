@@ -14,6 +14,7 @@
 @property (nonatomic, strong, readonly) NSNumber *ratingCount;
 @property (nonatomic, strong, readonly) NSNumber *rating;
 @property (nonatomic, strong, readonly) NSNumber *price;
+@property (nonatomic, strong, readonly) NSNumber *rank;
 
-- (instancetype)initWithUrl:(NSString *)url name:(NSString *)name ratingCount:(NSNumber *)count rating:(NSNumber *)rating price:(NSNumber *)price;
+- (instancetype)initWithUrl:(NSString *)url name:(NSString *)name ratingCount:(NSNumber *)count rating:(NSNumber *)rating price:(NSNumber *)price rank:(NSNumber *)rank;
 @end

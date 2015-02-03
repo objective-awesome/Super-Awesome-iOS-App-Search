@@ -14,10 +14,11 @@
 @property (nonatomic, strong, readwrite) NSNumber *ratingCount;
 @property (nonatomic, strong, readwrite) NSNumber *rating;
 @property (nonatomic, strong, readwrite) NSNumber *price;
+@property (nonatomic, strong, readwrite) NSNumber *rank;
 @end
 
 @implementation GoogleAppResult
-- (instancetype) initWithUrl:(NSString *)url name:(NSString *)name ratingCount:(NSNumber *)count rating:(NSNumber *)rating price:(NSNumber *)price
+- (instancetype) initWithUrl:(NSString *)url name:(NSString *)name ratingCount:(NSNumber *)count rating:(NSNumber *)rating price:(NSNumber *)price rank:(NSNumber *)rank
 {
     self = [super init];
     if (self) {
@@ -26,6 +27,7 @@
         _ratingCount = count;
         _price = price;
         _rating = rating;
+        _rank = rank;
     }
     return self;
 }
