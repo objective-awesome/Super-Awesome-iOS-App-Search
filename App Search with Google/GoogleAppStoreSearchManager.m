@@ -83,6 +83,9 @@
     NSURLComponents *components = [NSURLComponents componentsWithString:urlString];
     NSArray *pathComponents = [components.path componentsSeparatedByString:@"/"];
     NSLog(@"%@", pathComponents);
+    if (![(NSString *)pathComponents[2] isEqualToString:@"app"]) {
+        return nil;
+    }
     NSString *idComponent = pathComponents.lastObject;
     NSString *id = [idComponent substringFromIndex:2];
     return id;
@@ -98,7 +101,11 @@
     ONOXMLDocument *doc = [ONOXMLDocument HTMLDocumentWithString:html encoding:NSUTF8StringEncoding error:&err];
     NSInteger rank = 0;
     for (ONOXMLElement *element in [doc CSS:@"h3.r a"]) {
-        NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", [GoogleAppStoreSearchManager getAppIdFromiTunesUrl:element.attributes[@"href"]]];
+        NSString *appId = [GoogleAppStoreSearchManager getAppIdFromiTunesUrl:element.attributes[@"href"]];
+        if (appId == nil) {
+            continue;
+        }
+        NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", appId];
         AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
         NSURLSessionDataTask *task = [manager GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
             NSString *errorMessage = (NSString *)responseObject[@"errorMessage"];
