@@ -57,7 +57,7 @@
         case DeviceScopeiPhone:
             scopeString = @"iphone";
             break;
-        default:
+        default: // TODO: Not necessary, remove
             scopeString = @"iphone";
             break;
     }

@@ -19,6 +19,7 @@
 @property (nonatomic, strong) UIBarButtonItem *scopeBarButtonItem;
 
 @property (nonatomic, strong) GoogleAppStoreSearchManager *searchManager;
+@property (nonatomic, strong) NSArray *resultsStore;
 
 @end
 
@@ -26,6 +27,8 @@
 @implementation AppSearchTableViewController
 
 - (void)viewDidLoad {
+    // Create some initial data for our private properties
+    self.resultsStore = @[];
     self.searchManager = [[GoogleAppStoreSearchManager alloc] initWithDelegate:self];
     
     // Set up the search controller
@@ -43,19 +46,26 @@
     [searchBar setKeyboardAppearance:UIKeyboardAppearanceDark];
     [searchBar setAutocorrectionType:UITextAutocorrectionTypeNo];
     
+    // Set up the scope control
     self.scopeSegmentedControl = [[UISegmentedControl alloc] initWithItems:@[NSLocalizedString(@"iPhone", nil), NSLocalizedString(@"iPad", nil)]];
     self.scopeSegmentedControl.selectedSegmentIndex = 0;
-    [self.scopeSegmentedControl addTarget:self action:@selector(scopeSegmentedControlValueChanged:) forControlEvents:UIControlEventValueChanged];
     
+    // Position the scope control
     self.scopeBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.scopeSegmentedControl];
     self.navigationItem.rightBarButtonItem = self.scopeBarButtonItem;
 }
 
 
-#pragma mark - Target-Action
+#pragma mark - GoogleAppStoreSearchManagerDelegate
 
-- (void)scopeSegmentedControlValueChanged:(UISegmentedControl *)segmentedControl {
-    NSLog(@"Segmented control value changed to: %@", @(segmentedControl.selectedSegmentIndex));
+- (void)appSearchDidSucceedWithResults:(NSArray *)apps {
+    self.resultsStore = apps;
+    
+    [self.tableView reloadData];
+}
+
+- (void)appSearchDidFailWithError:(NSError *)error {
+    // TODO: Show a failure state on UI
 }
 
 
@@ -67,7 +77,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 0;
+    return self.resultsStore.count;
 }
 
 
@@ -132,7 +142,20 @@
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    NSString *searchString = searchBar.text;
+    DeviceScope scope = DeviceScopeiPhone;
     
+    switch (self.scopeSegmentedControl.selectedSegmentIndex) {
+        case 0: {
+            scope = DeviceScopeiPhone;
+        } break;
+        case 1: {
+            scope = DeviceScopeiPad;
+        } break;
+        default: {
+            NSAssert(NO, @"Device Scope type not handled: %@", @(self.scopeSegmentedControl.selectedSegmentIndex));
+        } break;
+    }
 }
 
 // called when cancel button pressed
