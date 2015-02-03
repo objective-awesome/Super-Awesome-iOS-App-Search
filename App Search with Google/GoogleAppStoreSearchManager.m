@@ -112,7 +112,7 @@
             NSString *errorMessage = (NSString *)responseObject[@"errorMessage"];
             NSArray *results = (NSArray *)responseObject[@"results"];
             
-            if (errorMessage != nil) {
+            if (errorMessage == nil) {
                 for (NSDictionary *result in results) {
                     NSString *title = (NSString *)result[@"trackName"];
                     NSNumber *ratingCount = (NSNumber *)result[@"userRatingCount"];
