@@ -19,7 +19,7 @@
 
 @property (strong, nonatomic) id<GoogleAppStoreSearchManagerDelegate> delegate;
 
-- (void)getAppsForSearchTerms:(NSArray *)terms withScope:(DeviceScope)scope;
+- (void)getAppsForSearchTerm:(NSString *)term withScope:(DeviceScope)scope;
 - (instancetype)initWithDelegate:(id<GoogleAppStoreSearchManagerDelegate>)delegate;
 
 @end

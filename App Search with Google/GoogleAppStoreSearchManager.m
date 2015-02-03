@@ -31,9 +31,11 @@
     return self;
 }
 
-- (void)getAppsForSearchTerms:(NSArray *)terms withScope:(DeviceScope)scope {
+- (void)getAppsForSearchTerm:(NSString *)term withScope:(DeviceScope)scope {
     self.web = [[UIWebView alloc] init];
     self.web.delegate = self;
+    
+    NSArray *terms = [term componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     
     NSString *urlString = [GoogleAppStoreSearchManager getUrlWithSearchTerms:terms scope:scope];
     
