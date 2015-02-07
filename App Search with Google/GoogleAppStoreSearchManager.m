@@ -114,7 +114,7 @@ static const int ddLogLevel = DDLogLevelError;
 + (NSString *)getAppIdFromiTunesUrl:(NSString *)urlString {
     NSURLComponents *components = [NSURLComponents componentsWithString:urlString];
     NSArray *pathComponents = [components.path componentsSeparatedByString:@"/"];
-    NSLog(@"%@", pathComponents);
+    DDLogVerbose(@"iTunes URL path components: %@", pathComponents);
     
     if (![(NSString *)pathComponents[2] isEqualToString:@"app"]) {
         return nil;
