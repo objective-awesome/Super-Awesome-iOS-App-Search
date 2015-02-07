@@ -31,8 +31,6 @@ static const int ddLogLevel = DDLogLevelError;
 @property (strong, nonatomic) NSMutableDictionary *tasks;
 @property (strong, nonatomic) NSMutableArray *results;
 
-@property (assign, nonatomic) NSInteger resultRank;
-
 @end
 
 
@@ -48,7 +46,6 @@ static const int ddLogLevel = DDLogLevelError;
         _tasks = [[NSMutableDictionary alloc] init];
         _results = [[NSMutableArray alloc] init];
         _delegate = delegate;
-        _resultRank = 0;
         
         _webView = [[UIWebView alloc] init];
         _webView.delegate = self;
@@ -76,7 +73,6 @@ static const int ddLogLevel = DDLogLevelError;
 - (void)invalidateTasks {
     DDLogInfo(@"Invalidate all google app search tasks");
     [NetworkActivityIndicator decrementActivityCount];
-    self.resultRank = 0;
 //    [self.webView stopLoading];
     
     if (self.tasks.allKeys.count > 0) {
@@ -130,7 +126,7 @@ static const int ddLogLevel = DDLogLevelError;
     return appId;
 }
 
-- (void)requestAppDetailsFromItunesForAppId:(NSString *)appId {
+- (NSURLSessionDataTask *)taskForAppDetailsFromItunesForAppId:(NSString *)appId {
     NSParameterAssert(appId != nil);
     
     NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", appId];
@@ -178,9 +174,7 @@ static const int ddLogLevel = DDLogLevelError;
         }
     }];
     
-    [NetworkActivityIndicator incrementActivityCount];
-    [self.tasks setObject:@(self.resultRank++) forKey:task];
-    [task resume];
+    return task;
 }
 
 
@@ -190,6 +184,7 @@ static const int ddLogLevel = DDLogLevelError;
     // The request finished, so decrement
     [NetworkActivityIndicator decrementActivityCount];
     
+    NSInteger rank = 0;
     NSString *html = [webView stringByEvaluatingJavaScriptFromString:
                       @"document.body.innerHTML"];
     NSError *err = nil;
@@ -198,7 +193,11 @@ static const int ddLogLevel = DDLogLevelError;
     for (ONOXMLElement *element in [doc CSS:@"h3.r a"]) {
         NSString *appId = [GoogleAppStoreSearchManager getAppIdFromiTunesUrl:element.attributes[@"href"]];
         if (appId != nil) {
-            [self requestAppDetailsFromItunesForAppId:appId];
+            NSURLSessionDataTask *task = [self taskForAppDetailsFromItunesForAppId:appId];
+            
+            [NetworkActivityIndicator incrementActivityCount];
+            [self.tasks setObject:@(rank++) forKey:task];
+            [task resume];
         }
     }
 }

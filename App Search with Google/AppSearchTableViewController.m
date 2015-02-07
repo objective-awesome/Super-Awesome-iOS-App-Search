@@ -200,6 +200,8 @@ static const int ddLogLevel = DDLogLevelError;
             }
         }
     }];
+    
+    // TODO: Setting to use this instead?
 //    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:app.url]];
 }
 
