@@ -35,6 +35,7 @@ PODS:
   - MBProgressHUD (0.9)
   - Ono (1.2.0)
   - SpinKit (1.2.0)
+  - TTTLocalizedPluralString (0.0.9)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.5)
@@ -44,6 +45,7 @@ DEPENDENCIES:
   - MBProgressHUD (~> 0.9)
   - Ono (~> 1.2)
   - SpinKit (~> 1.2)
+  - TTTLocalizedPluralString (~> 0.0)
 
 SPEC CHECKSUMS:
   AFNetworking: 0f54cb5d16ce38c1b76948faffb8d5fb705021c7
@@ -53,5 +55,6 @@ SPEC CHECKSUMS:
   MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
   Ono: 2c9f6c8c50af1b40e988ff85a3f200574ee445cd
   SpinKit: 11fa465172473ce3d59a80bf0449020b850e5229
+  TTTLocalizedPluralString: eeb165910dc6a98510c8ea5138cccb303e9d3d4f
 
 COCOAPODS: 0.36.0.beta.2

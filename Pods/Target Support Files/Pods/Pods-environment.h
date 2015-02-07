@@ -102,3 +102,9 @@
 #define COCOAPODS_VERSION_MINOR_SpinKit 2
 #define COCOAPODS_VERSION_PATCH_SpinKit 0
 
+// TTTLocalizedPluralString
+#define COCOAPODS_POD_AVAILABLE_TTTLocalizedPluralString
+#define COCOAPODS_VERSION_MAJOR_TTTLocalizedPluralString 0
+#define COCOAPODS_VERSION_MINOR_TTTLocalizedPluralString 0
+#define COCOAPODS_VERSION_PATCH_TTTLocalizedPluralString 9
+

@@ -8,6 +8,7 @@
 
 #import "GoogleAppResult.h"
 
+#import <TTTLocalizedPluralString/TTTLocalizedPluralString.h>
 
 
 @interface GoogleAppResult ()
@@ -29,16 +30,39 @@
 - (instancetype)initWithId:(NSString *)iTunesId url:(NSString *)url name:(NSString *)name ratingCount:(NSNumber *)count rating:(NSNumber *)rating price:(NSNumber *)price rank:(NSNumber *)rank
 {
     self = [super init];
-    if (self) {
-        _iTunesId = iTunesId;
-        _url = url;
-        _name = name;
-        _ratingCount = count;
-        _price = price;
-        _rating = rating;
-        _rank = rank;
+    if (!self) {
+        return nil;
     }
+    
+    _iTunesId = iTunesId;
+    _url = url;
+    _name = name;
+    _ratingCount = count;
+    _price = price;
+    _rating = rating;
+    _rank = rank;
+    
     return self;
+}
+
+- (NSString *)stringForPrice {
+    if (self.price == nil) {
+        return nil;
+    }
+    
+    if ([self.price isEqualToNumber:@(0)]) {
+        return NSLocalizedString(@"Free", nil);
+    }
+    
+    return [NSString stringWithFormat:@"$%@", self.price];
+}
+
+- (NSString *)stringForRatingCount {
+    if (self.ratingCount == nil) {
+        return nil;
+    }
+    
+    return TTTLocalizedPluralString(self.ratingCount.unsignedIntegerValue, @"Rating", nil);
 }
 
 @end

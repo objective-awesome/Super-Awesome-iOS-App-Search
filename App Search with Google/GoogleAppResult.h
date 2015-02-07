@@ -20,4 +20,7 @@
 
 - (instancetype)initWithId:(NSString *)iTunesId url:(NSString *)url name:(NSString *)name ratingCount:(NSNumber *)count rating:(NSNumber *)rating price:(NSNumber *)price rank:(NSNumber *)rank;
 
+- (NSString *)stringForPrice;
+- (NSString *)stringForRatingCount;
+
 @end
