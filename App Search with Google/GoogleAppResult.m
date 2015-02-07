@@ -8,8 +8,6 @@
 
 #import "GoogleAppResult.h"
 
-#import <TTTLocalizedPluralString/TTTLocalizedPluralString.h>
-
 
 @interface GoogleAppResult ()
 
@@ -62,7 +60,11 @@
         return nil;
     }
     
-    return TTTLocalizedPluralString(self.ratingCount.unsignedIntegerValue, @"Rating", nil);
+    if (self.ratingCount.unsignedIntegerValue == 1) {
+        return [NSString stringWithFormat:@"%@ %@", self.ratingCount, NSLocalizedString(@"Rating", nil)];
+    } else {
+        return [NSString stringWithFormat:@"%@ %@", self.ratingCount, NSLocalizedString(@"Ratings", nil)];
+    }
 }
 
 @end

@@ -168,8 +168,12 @@ static const int ddLogLevel = DDLogLevelError;
     
     if (app != nil) {
         cell.nameLabel.text = app.name;
+        cell.priceLabel.text = [app stringForPrice];
+        cell.ratingsCountLabel.text = [app stringForRatingCount];
     } else {
         cell.nameLabel.text = @"";
+        cell.priceLabel.text = @"";
+        cell.ratingsCountLabel.text = @"";
     }
     
     return cell;
