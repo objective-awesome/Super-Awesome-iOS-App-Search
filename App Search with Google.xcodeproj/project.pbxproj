@@ -14,6 +14,7 @@
 		5D528EA91A815360004B6DA2 /* AppSearchBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D528EA81A815360004B6DA2 /* AppSearchBar.m */; };
 		5D528EAD1A81601D004B6DA2 /* NetworkActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D528EAC1A81601D004B6DA2 /* NetworkActivityIndicator.m */; };
 		5D528EB41A816672004B6DA2 /* UIColor+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D528EB31A816672004B6DA2 /* UIColor+Utilities.m */; };
+		5D755C7D1A86C6BE002436B1 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5D755C7C1A86C6BE002436B1 /* Settings.bundle */; };
 		5DEB5BF61A8123D30008F1D7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB5BF51A8123D30008F1D7 /* main.m */; };
 		5DEB5BF91A8123D30008F1D7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB5BF81A8123D30008F1D7 /* AppDelegate.m */; };
 		5DEB5BFF1A8123D30008F1D7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DEB5BFD1A8123D30008F1D7 /* Main.storyboard */; };
@@ -48,6 +49,7 @@
 		5D528EAC1A81601D004B6DA2 /* NetworkActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkActivityIndicator.m; sourceTree = "<group>"; };
 		5D528EB21A816672004B6DA2 /* UIColor+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Utilities.h"; sourceTree = "<group>"; };
 		5D528EB31A816672004B6DA2 /* UIColor+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Utilities.m"; sourceTree = "<group>"; };
+		5D755C7C1A86C6BE002436B1 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		5DEB5BF01A8123D30008F1D7 /* App Search with Google.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "App Search with Google.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DEB5BF41A8123D30008F1D7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DEB5BF51A8123D30008F1D7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				5DEB5BF31A8123D30008F1D7 /* Supporting Files */,
 				5D528EA31A814AC4004B6DA2 /* Constants.h */,
 				5D528EA41A814AC4004B6DA2 /* Constants.m */,
+				5D755C7C1A86C6BE002436B1 /* Settings.bundle */,
 			);
 			path = "App Search with Google";
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D755C7D1A86C6BE002436B1 /* Settings.bundle in Resources */,
 				5DEB5BFF1A8123D30008F1D7 /* Main.storyboard in Resources */,
 				5DEB5C041A8123D30008F1D7 /* LaunchScreen.xib in Resources */,
 				5DEB5C011A8123D30008F1D7 /* Images.xcassets in Resources */,

@@ -183,7 +183,15 @@ static const int ddLogLevel = DDLogLevelError;
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     GoogleAppResult *app = self.resultsStore[indexPath.row];
-    NSNumber *appId = [self.appIdNumberFormatter numberFromString:app.iTunesId];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"open_in_app_store"]) {
+        [self loadAppResultInAppStore:app];
+    } else {
+        [self loadAppResultInApp:app];
+    }
+}
+
+- (void)loadAppResultInApp:(GoogleAppResult *)appResult {
+    NSNumber *appId = [self.appIdNumberFormatter numberFromString:appResult.iTunesId];
     
     SKStoreProductViewController *storeVC = [[SKStoreProductViewController alloc] init];
     storeVC.delegate = self;
@@ -203,9 +211,10 @@ static const int ddLogLevel = DDLogLevelError;
             }
         }
     }];
-    
-    // TODO: Setting to use this instead?
-//    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:app.url]];
+}
+
+- (void)loadAppResultInAppStore:(GoogleAppResult *)appResult {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:appResult.url]];
 }
 
 
