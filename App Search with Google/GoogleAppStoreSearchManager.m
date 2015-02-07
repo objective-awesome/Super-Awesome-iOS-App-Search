@@ -31,6 +31,8 @@ static const int ddLogLevel = DDLogLevelError;
 @property (strong, nonatomic) NSMutableDictionary *tasks;
 @property (strong, nonatomic) NSMutableArray *results;
 
+@property (assign, nonatomic) NSInteger resultRank;
+
 @end
 
 
@@ -46,6 +48,7 @@ static const int ddLogLevel = DDLogLevelError;
         _tasks = [[NSMutableDictionary alloc] init];
         _results = [[NSMutableArray alloc] init];
         _delegate = delegate;
+        _resultRank = 0;
         
         _webView = [[UIWebView alloc] init];
         _webView.delegate = self;
@@ -73,6 +76,7 @@ static const int ddLogLevel = DDLogLevelError;
 - (void)invalidateTasks {
     DDLogInfo(@"Invalidate all google app search tasks");
     [NetworkActivityIndicator decrementActivityCount];
+    self.resultRank = 0;
 //    [self.webView stopLoading];
     
     if (self.tasks.allKeys.count > 0) {
@@ -126,6 +130,59 @@ static const int ddLogLevel = DDLogLevelError;
     return appId;
 }
 
+- (void)requestAppDetailsFromItunesForAppId:(NSString *)appId {
+    NSParameterAssert(appId != nil);
+    
+    NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", appId];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    NSURLSessionDataTask *task = [manager GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        NSString *errorMessage = (NSString *)responseObject[@"errorMessage"];
+        NSArray *results = (NSArray *)responseObject[@"results"];
+        DDLogVerbose(@"App Search Result: %@", results);
+        
+        if (errorMessage == nil) {
+            for (NSDictionary *result in results) {
+                NSString *title = (NSString *)result[@"trackName"];
+                NSNumber *ratingCount = (NSNumber *)result[@"userRatingCount"];
+                NSNumber *rating = (NSNumber *)result[@"averageUserRating"];
+                NSString *itunesUrl = (NSString *)result[@"trackViewUrl"];
+                NSNumber *price = (NSNumber *)result[@"price"];
+                DDLogDebug(@"App Search Result:\n"
+                           "Title: %@\n"
+                           "Rating: %@\n"
+                           "Rating Count: %@\n"
+                           "iTunes URL: %@\n"
+                           "Price: %@\n"
+                           "Rank: %@\n", title, ratingCount, rating, itunesUrl, price, self.tasks[task]);
+                
+                GoogleAppResult *appResult = [[GoogleAppResult alloc] initWithId:appId url:itunesUrl name:title ratingCount:ratingCount rating:rating price:price rank:self.tasks[task]];
+                [self.results addObject:appResult];
+            }
+        }
+        
+        [self.tasks removeObjectForKey:task];
+        [NetworkActivityIndicator decrementActivityCount];
+        
+        if (self.tasks.count == 0) {
+            [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
+        }
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        DDLogWarn(@"ITunes request failed with error: %@", error);
+        [self.tasks removeObjectForKey:task];
+        [NetworkActivityIndicator decrementActivityCount];
+        
+        // TODO: This is wrong
+        if (self.tasks.count == 0) {
+            [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
+        }
+    }];
+    
+    [NetworkActivityIndicator incrementActivityCount];
+    [self.tasks setObject:@(self.resultRank++) forKey:task];
+    [task resume];
+}
+
 
 #pragma mark - UIWebViewDelegate Methods
 
@@ -137,61 +194,12 @@ static const int ddLogLevel = DDLogLevelError;
                       @"document.body.innerHTML"];
     NSError *err = nil;
     ONOXMLDocument *doc = [ONOXMLDocument HTMLDocumentWithString:html encoding:NSUTF8StringEncoding error:&err];
-    NSInteger rank = 0;
     
     for (ONOXMLElement *element in [doc CSS:@"h3.r a"]) {
         NSString *appId = [GoogleAppStoreSearchManager getAppIdFromiTunesUrl:element.attributes[@"href"]];
-        if (appId == nil) {
-            continue;
+        if (appId != nil) {
+            [self requestAppDetailsFromItunesForAppId:appId];
         }
-        NSString *url = [NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", appId];
-        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-        
-        NSURLSessionDataTask *task = [manager GET:url parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-            NSString *errorMessage = (NSString *)responseObject[@"errorMessage"];
-            NSArray *results = (NSArray *)responseObject[@"results"];
-            DDLogVerbose(@"App Search Result: %@", results);
-            
-            if (errorMessage == nil) {
-                for (NSDictionary *result in results) {
-                    NSString *title = (NSString *)result[@"trackName"];
-                    NSNumber *ratingCount = (NSNumber *)result[@"userRatingCount"];
-                    NSNumber *rating = (NSNumber *)result[@"averageUserRating"];
-                    NSString *itunesUrl = (NSString *)result[@"trackViewUrl"];
-                    NSNumber *price = (NSNumber *)result[@"price"];
-                    DDLogDebug(@"App Search Result:\n"
-                               "Title: %@\n"
-                               "Rating: %@\n"
-                               "Rating Count: %@\n"
-                               "iTunes URL: %@\n"
-                               "Price: %@\n"
-                               "Rank: %@\n", title, ratingCount, rating, itunesUrl, price, self.tasks[task]);
-                    
-                    GoogleAppResult *appResult = [[GoogleAppResult alloc] initWithUrl:itunesUrl name:title ratingCount:ratingCount rating:rating price:price rank:self.tasks[task]];
-                    [self.results addObject:appResult];
-                }
-            }
-
-            [self.tasks removeObjectForKey:task];
-            [NetworkActivityIndicator decrementActivityCount];
-            
-            if (self.tasks.count == 0) {
-                [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
-            }
-        } failure:^(NSURLSessionDataTask *task, NSError *error) {
-            DDLogWarn(@"ITunes request failed with error: %@", error);
-            [self.tasks removeObjectForKey:task];
-            [NetworkActivityIndicator decrementActivityCount];
-            
-            // TODO: This is wrong
-            if (self.tasks.count == 0) {
-                [self.delegate appSearchDidSucceedWithResults:[NSArray arrayWithArray:self.results]];
-            }
-        }];
-        
-        [NetworkActivityIndicator incrementActivityCount];
-        [self.tasks setObject:@(rank++) forKey:task];
-        [task resume];
     }
 }
 

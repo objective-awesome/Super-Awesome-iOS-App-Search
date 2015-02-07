@@ -11,6 +11,7 @@
 #import <SpinKit/RTSpinKitView.h>
 #import <MBProgressHUD/MBProgressHUD.h>
 #import <CocoaLumberjack/CocoaLumberjack.h>
+@import StoreKit;
 
 #import "GoogleAppStoreSearchManager.h"
 #import "GoogleAppStoreSearchManagerDelegate.h"
@@ -26,7 +27,7 @@ static const int ddLogLevel = DDLogLevelError;
 #endif
 
 
-@interface AppSearchTableViewController () <UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate>
+@interface AppSearchTableViewController () <UISearchBarDelegate, GoogleAppStoreSearchManagerDelegate, SKStoreProductViewControllerDelegate>
 
 @property (nonatomic, strong) UISearchBar *searchBar;
 @property (nonatomic, strong) UISegmentedControl *scopeSegmentedControl;
@@ -38,6 +39,7 @@ static const int ddLogLevel = DDLogLevelError;
 @property (nonatomic, assign, readonly) DeviceScope scope;
 @property (nonatomic, strong) NSTimer *inputLimiter;
 @property (nonatomic, strong) NSString *lastSearchedString;
+@property (nonatomic, strong) NSNumberFormatter *appIdNumberFormatter;
 
 @end
 
@@ -48,6 +50,8 @@ static const int ddLogLevel = DDLogLevelError;
     // Create some initial data for our private properties
     self.resultsStore = @[];
     self.searchManager = [[GoogleAppStoreSearchManager alloc] initWithDelegate:self];
+    self.appIdNumberFormatter = [[NSNumberFormatter alloc] init];
+    self.appIdNumberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
     
     // Set nav controller bar style to change the status bar style to light
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
@@ -179,7 +183,24 @@ static const int ddLogLevel = DDLogLevelError;
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     GoogleAppResult *app = self.resultsStore[indexPath.row];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:app.url]];
+    NSNumber *appId = [self.appIdNumberFormatter numberFromString:app.iTunesId];
+    
+    SKStoreProductViewController *storeVC = [[SKStoreProductViewController alloc] init];
+    storeVC.delegate = self;
+    [storeVC loadProductWithParameters:@{SKStoreProductParameterITunesItemIdentifier: appId} completionBlock:^(BOOL result, NSError *error) {
+        if (error != nil) {
+            DDLogError(@"Error loading product for app id: %@", appId);
+        } else {
+            DDLogInfo(@"Loaded product for app id successfully? %@", (result ? @"YES" : @"NO"));
+            
+            if (result) {
+                [self presentViewController:storeVC animated:YES completion:^{
+                    DDLogDebug(@"Presented store view controller successfully");
+                }];
+            }
+        }
+    }];
+//    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:app.url]];
 }
 
 
@@ -212,6 +233,17 @@ static const int ddLogLevel = DDLogLevelError;
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     [self search];
     [self.searchBar resignFirstResponder];
+}
+
+
+#pragma mark - SKStoreProductViewController Delegate
+
+- (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
+    if (viewController != nil) {
+        [self dismissViewControllerAnimated:YES completion:^{
+            DDLogDebug(@"Store VC did dismiss");
+        }];
+    }
 }
 
 @end
