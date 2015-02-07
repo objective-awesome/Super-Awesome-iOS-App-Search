@@ -17,7 +17,7 @@
 
 @interface GoogleAppStoreSearchManager : NSObject <UIWebViewDelegate>
 
-@property (strong, nonatomic) id<GoogleAppStoreSearchManagerDelegate> delegate;
+@property (weak, nonatomic) id<GoogleAppStoreSearchManagerDelegate> delegate;
 
 - (instancetype)initWithDelegate:(id<GoogleAppStoreSearchManagerDelegate>)delegate;
 
