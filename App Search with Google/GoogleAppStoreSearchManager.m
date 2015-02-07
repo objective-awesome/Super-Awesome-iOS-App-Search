@@ -150,7 +150,7 @@ static const int ddLogLevel = DDLogLevelError;
                            "Rating Count: %@\n"
                            "iTunes URL: %@\n"
                            "Price: %@\n"
-                           "Rank: %@\n", title, ratingCount, rating, itunesUrl, price, self.tasks[task]);
+                           "Rank: %@\n", title, rating, ratingCount, itunesUrl, price, self.tasks[task]);
                 
                 GoogleAppResult *appResult = [[GoogleAppResult alloc] initWithId:appId url:itunesUrl name:title ratingCount:ratingCount rating:rating price:price rank:self.tasks[task]];
                 [self.results addObject:appResult];
