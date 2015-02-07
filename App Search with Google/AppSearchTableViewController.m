@@ -187,7 +187,10 @@ static const int ddLogLevel = DDLogLevelError;
     
     SKStoreProductViewController *storeVC = [[SKStoreProductViewController alloc] init];
     storeVC.delegate = self;
+    self.loading = YES;
     [storeVC loadProductWithParameters:@{SKStoreProductParameterITunesItemIdentifier: appId} completionBlock:^(BOOL result, NSError *error) {
+        self.loading = NO;
+        
         if (error != nil) {
             DDLogError(@"Error loading product for app id: %@", appId);
         } else {
