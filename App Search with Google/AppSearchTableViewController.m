@@ -176,6 +176,7 @@ static const int ddLogLevel = DDLogLevelError;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.searchBar resignFirstResponder];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     GoogleAppResult *app = self.resultsStore[indexPath.row];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:app.url]];
