@@ -3,6 +3,9 @@ Developed by Joel Fischer and Justin Dickow, this example iOS application shows 
 
 This was basically developed in a day. Install it if you want it! Make it better!
 
+![App Store Search](http://i.imgur.com/d80HvZi.png?1)
+![App Store Search with Google](http://i.imgur.com/gs7D56g.png?1)
+
 This is the top 10 results the App Store gives for "Twitter"
 
 1. Twitter
